@@ -1,0 +1,16 @@
+{
+  "name": "project-management-starter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "受託開発向けプロジェクトマネジメント・ドキュメントのボイラープレート(要件定義・設計・見積もり)",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "blume dev",
+    "docs:build": "blume build",
+    "lint:md": "markdownlint-cli2 \"docs/**/*.{md,mdx}\""
+  },
+  "devDependencies": {
+    "blume": "^1.0.3",
+    "markdownlint-cli2": "^0.23.0"
+  }
+}

@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# Blume build output / internal workspace
+dist/
+.astro/
+.blume/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# env
+.env
+.env.*
+
+# Claude Code local settings
+.claude/settings.local.json

@@ -1,0 +1,97 @@
+---
+title: アーキテクチャ設計
+description: システム構成・データモデル・インフラ設計
+---
+
+> ステータス: **draft**
+
+## システム構成図
+
+<!-- TODO: 技術選定の結果に合わせて更新 -->
+
+```mermaid
+flowchart TB
+    subgraph Client[クライアント]
+        Browser[ブラウザ]
+    end
+    subgraph Cloud[クラウド(例: AWS)]
+        LB[ロードバランサー] --> App[アプリケーションサーバー<br/>例: Next.js]
+        App --> DB[(データベース<br/>例: PostgreSQL)]
+        App --> Storage[オブジェクトストレージ<br/>帳票PDF等]
+    end
+    Browser -->|HTTPS| LB
+```
+
+## コンポーネント設計
+
+<!-- TODO: 主要コンポーネントの責務を記載 -->
+
+| コンポーネント | 責務 | 対応要件 |
+| --- | --- | --- |
+| 例: 認証モジュール | ログイン・セッション管理 | NFR-003 |
+| 例: 受注管理モジュール | 受注 CRUD・検索 | FR-001, FR-002 |
+| 例: 帳票モジュール | PDF 生成・ダウンロード | FR-003 |
+
+## データモデル
+
+<!-- TODO: 主要エンティティの ER 図を記載。詳細なテーブル定義は実装フェーズで別途作成 -->
+
+```mermaid
+erDiagram
+    USERS ||--o{ ORDERS : "登録する"
+    CUSTOMERS ||--o{ ORDERS : "発注する"
+    ORDERS ||--|{ ORDER_ITEMS : "含む"
+
+    USERS {
+        bigint id PK
+        string name
+        string email
+        string password_hash
+    }
+    CUSTOMERS {
+        bigint id PK
+        string name
+    }
+    ORDERS {
+        bigint id PK
+        string order_number
+        date ordered_at
+        bigint customer_id FK
+        bigint created_by FK
+    }
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        string item_name
+        int quantity
+        int unit_price
+    }
+```
+
+## インフラ・環境構成
+
+<!-- TODO: 環境ごとの構成を記載。運用費用見積もりの根拠になる -->
+
+| 環境 | 用途 | 構成 |
+| --- | --- | --- |
+| 本番 | 顧客利用 | 例: EC2 t3.small ×1、RDS db.t3.micro |
+| ステージング | 受け入れ確認 | 例: 本番の縮小構成 |
+| 開発 | 開発・テスト | 例: ローカル + Docker |
+
+## セキュリティ設計
+
+<!-- TODO: NFR のセキュリティ要件に対応させて記載 -->
+
+- 例: 全通信を TLS 1.2 以上で暗号化(NFR-003)
+- 例: パスワードは bcrypt でハッシュ化(NFR-003)
+- 例: 権限は管理者/一般の 2 ロール
+
+## 運用設計
+
+<!-- TODO: バックアップ・監視・障害対応の方針を記載。運用費用見積もりの根拠になる -->
+
+| 項目 | 方針 | 対応要件 |
+| --- | --- | --- |
+| バックアップ | 例: RDS 自動スナップショット(日次・30日保持) | NFR-004 |
+| 監視 | 例: 死活監視 + エラー通知(メール) | NFR-002 |
+| 障害対応 | 例: 平日 9-18 時、一次回答 4 時間以内 | NFR-002 |
