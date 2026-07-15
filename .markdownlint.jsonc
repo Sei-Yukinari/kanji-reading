@@ -12,5 +12,7 @@
   // 先頭h1はfrontmatterのtitleで代替するため不要
   "MD041": false,
   // 裸URLを許可
-  "MD034": false
+  "MD034": false,
+  // MDXコメント {/* ... */} を強調記法と誤検知するため無効化
+  "MD037": false
 }

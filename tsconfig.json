@@ -1,0 +1,13 @@
+{
+  // Blume 1.0.3 の dev サーバーでは mermaid の依存(dayjs 等の CJS)が Vite の
+  // 事前バンドルを通らず、mermaid 図が一切描画されない(本番ビルドは正常)。
+  // Blume は compilerOptions.paths を Vite の resolve.alias に注入するため、
+  // mermaid を依存内包の自己完結 ESM バンドルへ向けて回避する。
+  // Blume 側で修正されたらこのファイルは削除してよい。
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "mermaid": ["./node_modules/mermaid/dist/mermaid.esm.min.mjs"]
+    }
+  }
+}

@@ -47,7 +47,7 @@ npm run docs:dev   # http://localhost:4321 (ポートは起動ログ参照)
 
 - ドキュメントには ID(REQ-/FR-/NFR-/SCR-/T-xxx)を採番し、上下流でトレーサビリティを保ちます
 - `docs/` 配下の md を編集すると hooks が frontmatter 検証と markdownlint を自動実行します
-- 未記入箇所は `<!-- TODO: ... -->`、進捗は各ページ冒頭のステータス行(`> ステータス: **draft | review | approved**`)で管理します
+- 未記入箇所は `{/* TODO: ... */}`、進捗は各ページ冒頭のステータス行(`> ステータス: **draft | review | approved**`)で管理します
 
 ## ドキュメントサイトのビルド・公開
 

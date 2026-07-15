@@ -11,7 +11,7 @@ docs/requirements/ 配下の 3 ドキュメントを、ユーザーへのヒア�
 
 ### 1. 現状確認
 
-- docs/requirements/ 配下の 3 ファイルを読み、記入済み箇所と `<!-- TODO -->` の残り箇所を把握する
+- docs/requirements/ 配下の 3 ファイルを読み、記入済み箇所と `{/* TODO` コメントの残り箇所を把握する
 - 既に記入済みの内容は上書きせず、追記・更新の形で扱う
 
 ### 2. ヒアリング
@@ -29,11 +29,11 @@ AskUserQuestion を使い、以下の順でヒアリングする。1 回の質�
 
 以下の順で作成し、`.claude/rules/documentation.md` の書式・ID 採番規則に従う:
 
-1. `docs/requirements/01-project-overview.md` — 背景・目的・スコープ・体制・マイルストーン
-2. `docs/requirements/02-user-requirements.md` — 要求一覧(REQ-xxx)・受け入れ基準・未確定事項
-3. `docs/requirements/03-system-requirements.md` — 機能要件(FR-xxx)・非機能要件(NFR-xxx)。各要件に対応する REQ を必ず紐付ける
+1. `docs/requirements/01-project-overview.mdx` — 背景・目的・スコープ・体制・マイルストーン
+2. `docs/requirements/02-user-requirements.mdx` — 要求一覧(REQ-xxx)・受け入れ基準・未確定事項
+3. `docs/requirements/03-system-requirements.mdx` — 機能要件(FR-xxx)・非機能要件(NFR-xxx)。各要件に対応する REQ を必ず紐付ける
 
-- ヒアリングで得られなかった箇所は `<!-- TODO: ... -->` を残す
+- ヒアリングで得られなかった箇所は `{/* TODO: ... */}` コメントを残す
 - テンプレートの「例:」で始まる記入例は、実際の内容に置き換えたら削除する
 
 ### 4. 完了報告

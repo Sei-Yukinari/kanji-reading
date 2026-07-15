@@ -12,11 +12,11 @@ docs/estimate/ 配下の 2 ドキュメントを、要件定義・設計に基�
 ### 1. 上流ドキュメントの確認
 
 - docs/requirements/ と docs/design/ の全ファイルを読み込む
-- 見積もり精度に影響する `<!-- TODO -->`(スコープ・技術選定・環境構成の未確定)が残っている場合は、概算見積もりとして進めるか確認する
+- 見積もり精度に影響する `{/* TODO */}`(スコープ・技術選定・環境構成の未確定)が残っている場合は、概算見積もりとして進めるか確認する
 
 ### 2. 見積もり条件のヒアリング
 
-AskUserQuestion で以下を確認する(docs/estimate/01-development-cost.md の単価表に既定値があれば提示して確認):
+AskUserQuestion で以下を確認する(docs/estimate/01-development-cost.mdx の単価表に既定値があれば提示して確認):
 
 - ロール別単価(円/人日)
 - リスクバッファ率(推奨 10〜20%、不確実性の根拠とともに)
@@ -33,11 +33,11 @@ AskUserQuestion で以下を確認する(docs/estimate/01-development-cost.md �
 
 `.claude/rules/documentation.md` の書式に従い、以下を作成する:
 
-1. `docs/estimate/01-development-cost.md` — 単価表・フェーズ別 WBS・リスクバッファ・前提条件・除外事項・支払い条件・サマリー
-2. `docs/estimate/02-operation-cost.md` — インフラ費用(設計の環境構成に基づく)・外部サービス・保守費用・年間総額
+1. `docs/estimate/01-development-cost.mdx` — 単価表・フェーズ別 WBS・リスクバッファ・前提条件・除外事項・支払い条件・サマリー
+2. `docs/estimate/02-operation-cost.mdx` — インフラ費用(設計の環境構成に基づく)・外部サービス・保守費用・年間総額
 
 - **前提条件と除外事項は必ず具体的に記載する**(要求定義の「対象外」「未確定事項」を反映)
-- インフラ費用は docs/design/03-architecture.md の環境構成と整合させ、為替前提を明記する
+- インフラ費用は docs/design/03-architecture.mdx の環境構成と整合させ、為替前提を明記する
 
 ### 5. 完了報告
 

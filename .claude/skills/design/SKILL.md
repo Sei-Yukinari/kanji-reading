@@ -12,7 +12,7 @@ docs/design/ 配下の 3 ドキュメントを、要件定義に基づいて作�
 ### 1. 上流ドキュメントの確認
 
 - docs/requirements/ の 3 ファイルを読み込む
-- 重大な `<!-- TODO -->`(スコープ・Must 要求・非機能要件の未確定)が残っている場合は、設計に進んで良いかユーザーに確認する
+- 重大な `{/* TODO */}`(スコープ・Must 要求・非機能要件の未確定)が残っている場合は、設計に進んで良いかユーザーに確認する
 
 ### 2. 設計方針のヒアリング
 
@@ -31,9 +31,9 @@ AskUserQuestion で以下を確認する(既に docs に記載があればスキ
 
 `.claude/rules/documentation.md` の書式・ID 採番規則に従い、以下を作成する:
 
-1. `docs/design/01-ui-ux.md` — 画面一覧(SCR-xxx、FR に紐付け)・画面遷移図(mermaid)・共通 UI ルール
-2. `docs/design/02-tech-stack.md` — 比較表(T-xxx)・選定理由・不採用理由・リスク
-3. `docs/design/03-architecture.md` — 構成図・ER 図(mermaid)・環境構成・セキュリティ/運用設計(NFR に紐付け)
+1. `docs/design/01-ui-ux.mdx` — 画面一覧(SCR-xxx、FR に紐付け)・画面遷移図(mermaid)・共通 UI ルール
+2. `docs/design/02-tech-stack.mdx` — 比較表(T-xxx)・選定理由・不採用理由・リスク
+3. `docs/design/03-architecture.mdx` — 構成図・ER 図(mermaid)・環境構成・セキュリティ/運用設計(NFR に紐付け)
 
 - 技術選定はユーザーの最終判断を仰ぐ: 比較表と推奨案を提示し、承認を得てから「採用」と記載する
 - 運用設計・環境構成は見積もり(運用費用)の根拠になるため、具体的なインスタンスサイズまで記載する

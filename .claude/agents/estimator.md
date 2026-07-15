@@ -18,7 +18,7 @@ tools: Read, Glob, Grep
    - 非機能要件(NFR)に対応するタスク(性能試験・セキュリティ対応・環境構築)を漏らさない
    - 管理工数(PM・定例・課題管理)を全体の 10〜15% 目安で計上する
 3. 各タスクに人日とロール(PM / シニアエンジニア / エンジニア / デザイナー)を割り当てる
-4. 技術検証が必要な項目(docs/design/02-tech-stack.md のリスク欄)は検証タスクとして明示的に計上する
+4. 技術検証が必要な項目(docs/design/02-tech-stack.mdx のリスク欄)は検証タスクとして明示的に計上する
 
 ## 見積もりの原則
 
@@ -29,7 +29,7 @@ tools: Read, Glob, Grep
 
 ## 報告形式
 
-docs/estimate/01-development-cost.md の WBS 表にそのまま転記できる形式で報告する:
+docs/estimate/01-development-cost.mdx の WBS 表にそのまま転記できる形式で報告する:
 
 - フェーズ別タスク表(タスク / 対応要件 ID / ロール / 人日)
 - フェーズ小計と総人日

@@ -1,0 +1,55 @@
+---
+title: 要件定義
+description: プロジェクト概要・要求定義・要件定義のセクション概要
+---
+
+> ステータス: **draft**
+
+このセクションでは、プロジェクトの前提と「何を作るか」を定義します。
+
+## 構成
+
+| ドキュメント | 内容 |
+| --- | --- |
+| [プロジェクト概要](/requirements/project-overview) | 背景・目的・スコープ・体制・スケジュール |
+| [要求定義](/requirements/user-requirements) | 顧客の要求(REQ-xxx)の整理と優先度付け |
+| [システム要件定義](/requirements/system-requirements) | 機能要件(FR-xxx)・非機能要件(NFR-xxx) |
+
+## 手法テンプレート
+
+要件定義を補強するための手法別テンプレートです。**プロジェクトの特性に応じて必要なものだけ使用します**(すべて埋める必要はありません)。
+
+### 事業分析
+
+| ドキュメント | 用途 |
+| --- | --- |
+| [市場調査](/requirements/market-research) | 市場規模(TAM/SAM/SOM)・トレンド・機会と脅威 |
+| [競合調査](/requirements/competitor-analysis) | 競合比較・ポジショニング・差別化ポイント |
+| [ビジネスモデル](/requirements/business-model) | ビジネスモデルキャンバス・収益/コスト構造 |
+| [KPI ツリー](/requirements/kpi-tree) | KGI の分解と KPI(KPI-xxx)・計測要件 |
+
+### ユーザー理解
+
+| ドキュメント | 用途 |
+| --- | --- |
+| [ペルソナ設計](/requirements/persona) | 主要ユーザー像(PS-xxx)の定義 |
+| [ユーザーヒアリング](/requirements/user-interview) | ヒアリングの計画・質問項目・記録 |
+| [カスタマージャーニーマップ](/requirements/customer-journey-map) | 体験の時系列整理とペイン・改善機会の発見 |
+| [ユーザーストーリーマッピング](/requirements/user-story-mapping) | ストーリーの整理と MVP・リリース分割 |
+
+### 業務・システム分析
+
+| ドキュメント | 用途 |
+| --- | --- |
+| [ユースケース](/requirements/use-case) | アクターと操作単位(UC-xxx)の定義 |
+| [業務フロー](/requirements/business-flow) | As-Is / To-Be の業務フロー(BF-xxx) |
+
+## 書き方ガイド
+
+1. **プロジェクト概要**から着手し、顧客との共通認識を先に固めます
+2. **要求定義**では顧客の言葉のまま要求を収集し、REQ-xxx の ID を採番します
+3. **要件定義**では要求をシステム要件へ翻訳し、各要件に対応する要求 ID を必ず記載します(トレーサビリティ)
+
+:::tip
+Claude Code で `/requirements` スキルを実行すると、ヒアリング形式でこのセクションを埋められます。
+:::

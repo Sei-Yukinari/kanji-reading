@@ -12,7 +12,7 @@ tools: Read, Glob, Grep, WebSearch, WebFetch, mcp__context7__resolve-library-id,
 
 ## 調査手順
 
-1. docs/requirements/03-system-requirements.md を読み、関係する FR/NFR を把握する
+1. docs/requirements/03-system-requirements.mdx を読み、関係する FR/NFR を把握する
 2. 各候補について以下を調査する:
    - 最新の安定バージョンとリリース頻度(context7 または公式サイト)
    - ライセンス(商用利用の可否)
@@ -23,7 +23,7 @@ tools: Read, Glob, Grep, WebSearch, WebFetch, mcp__context7__resolve-library-id,
 
 ## 報告形式
 
-docs/design/02-tech-stack.md の比較表(T-xxx)にそのまま転記できる形式で報告する:
+docs/design/02-tech-stack.mdx の比較表(T-xxx)にそのまま転記できる形式で報告する:
 
 - 候補ごとの比較表(観点 × 候補、◎○△× 評価と根拠)
 - 各候補の事実情報(バージョン・ライセンス・出典 URL)

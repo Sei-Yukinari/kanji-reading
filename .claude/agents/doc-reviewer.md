@@ -17,15 +17,15 @@ tools: Read, Glob, Grep, Bash
 
 ### 2. 記入漏れ
 
-- `<!-- TODO` の残存箇所をすべて列挙する
+- `{/* TODO` コメントの残存箇所をすべて列挙する
 - 「例:」で始まる記入例が実データに置き換わらず残っている箇所を検出する
 - 見積もりサマリーの `¥0` 残存を検出する
 
 ### 3. 上下流の整合性
 
 - 要求定義の「対象外」「未確定事項」が見積もりの「除外事項」「前提条件」に反映されているか
-- docs/design/03-architecture.md の環境構成と docs/estimate/02-operation-cost.md のインフラ費用の項目が一致しているか
-- マイルストーン(01-project-overview.md)と見積もりの想定期間が矛盾していないか
+- docs/design/03-architecture.mdx の環境構成と docs/estimate/02-operation-cost.mdx のインフラ費用の項目が一致しているか
+- マイルストーン(01-project-overview.mdx)と見積もりの想定期間が矛盾していないか
 
 ### 4. frontmatter・書式
 
