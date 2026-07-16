@@ -11,15 +11,22 @@ description: UI/UX・技術選定・アーキテクチャのセクション概�
 
 | ドキュメント | 内容 |
 | --- | --- |
-| [UI/UX設計](/design/ui-ux) | 画面一覧・画面遷移・デザイン方針 |
+| [UI/UX設計](/design/ui-ux) | 画面一覧・デザイン方針・共通UIルール |
 | [技術選定](/design/tech-stack) | 技術候補の比較・選定理由・リスク |
-| [アーキテクチャ設計](/design/architecture) | システム構成・データモデル・インフラ |
+| [アーキテクチャ設計](/design/architecture) | システム構成・インフラ |
+| [機能設計](/design/functional-spec) | 機能要件(FR)ごとの処理仕様・業務ルール・エラーハンドリング |
+| [画面遷移図](/design/screen-flow) | 画面間の遷移条件・分岐 |
+| [シーケンス図](/design/sequence-flow) | 主要フローのアクター・システム間のやり取り |
+| [ER図](/design/er-diagram) | データモデルのエンティティ関連 |
+| [API一覧](/design/api-list) | エンドポイント一覧・リクエスト/レスポンス仕様 |
+| [非機能設計](/design/nfr-spec) | 非機能要件(NFR)ごとの実現方式・実装詳細 |
 
 ## 書き方ガイド
 
 1. 設計判断には必ず根拠となる要件 ID(FR-xxx / NFR-xxx)を紐付けます
 2. 技術選定は候補を比較表で示し、選ばなかった理由も残します
 3. 図は mermaid で記述し、画像の貼り付けは補助的に使います
+4. API一覧のIDは API-xxx。対応する機能要件(FR-xxx)を必ず紐付けます
 
 :::tip
 Claude Code で `/design` スキルを実行すると、要件定義を読み込んだうえでこのセクションを作成できます。技術調査には `tech-researcher` サブエージェントが使われます。

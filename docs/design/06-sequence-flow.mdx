@@ -1,0 +1,49 @@
+---
+title: シーケンス図
+description: 主要フロー(ユースケース)のアクター・システム間のやり取り
+---
+
+> ステータス: **draft**
+
+[ユースケース](/requirements/use-case)の主要フロー(UC-xxx)について、画面・API・データベース間のやり取りを詳細化します。専用IDは採番せず、UC-xxxに対応付けます。複数UCにまたがる横断フローは見出しに対象UCを併記します(例: `### 主要フロー: 入出庫記録〜在庫確認(UC-001, UC-002)`)。
+
+## 対象フロー一覧
+
+{/* TODO: 設計判断が必要な主要フローのみ記載。UC-xxxは12-use-case.mdxの定義と一致させる */}
+
+| 対応UC | フロー名 | 概要 | 関連画面 | 関連API |
+| --- | --- | --- | --- | --- |
+| UC-001 | 例: 入出庫を記録する | 商品の入庫・出庫数を登録し在庫数を更新する | SCR-xxx | API-xxx |
+
+## フロー詳細
+
+{/* TODO: 12-use-case.mdxのユースケース記述を前提に、画面・API・DBまで具体化する */}
+
+### UC-001: 例: 入出庫を記録する
+
+```mermaid
+sequenceDiagram
+    actor U as 在庫管理担当
+    participant SCR as SCR-xxx 入出庫登録画面
+    participant API as API-xxx 入出庫登録API
+    participant DB as 在庫DB
+
+    U->>SCR: 商品を検索(またはバーコードをスキャン)
+    SCR->>API: GET /products/{id}
+    alt 商品が見つからない場合(代替フロー)
+        API-->>SCR: 404
+        SCR-->>U: 新規登録画面を表示
+    end
+    API-->>SCR: 商品情報と現在庫数
+    SCR-->>U: 商品情報と現在庫数を表示
+    U->>SCR: 入庫/出庫の区分と数量を入力し保存を押下
+    SCR->>API: POST /stock-movements
+    opt 出庫数が在庫数を超える場合(例外フロー)
+        API-->>SCR: 400 警告メッセージ
+        SCR-->>U: 警告を表示し確認を求める
+    end
+    API->>DB: 在庫数をUPDATE、履歴をINSERT
+    DB-->>API: 更新完了
+    API-->>SCR: 200 完了
+    SCR-->>U: 完了を表示
+```

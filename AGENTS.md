@@ -7,7 +7,7 @@
 ```text
 docs/
 ├── requirements/   # 要件定義(プロジェクト概要・要求定義・要件定義)
-├── design/         # 設計(UI/UX・技術選定・アーキテクチャ)
+├── design/         # 設計(UI/UX・技術選定・アーキテクチャ・機能設計・画面遷移図・シーケンス図・ER図・API一覧・非機能設計)
 └── estimate/       # 見積もり(開発費用・運用費用)
 ```
 
@@ -29,7 +29,7 @@ docs/
 - すべて日本語で記述する
 - frontmatter(title / description)必須 — hooks で自動検証される。独自フィールドの追加は禁止(Blume がビルドから除外する)
 - 進捗は本文冒頭のステータス行(`> ステータス: **draft**`)で管理する
-- ID 採番(REQ-/FR-/NFR-/SCR-/T-xxx)とトレーサビリティを守る
+- ID 採番(REQ-/FR-/NFR-/KPI-/PS-/UC-/BF-/SCR-/T-/API-xxx)とトレーサビリティを守る
 - 詳細は `.claude/rules/documentation.md` を参照
 
 ## コマンド

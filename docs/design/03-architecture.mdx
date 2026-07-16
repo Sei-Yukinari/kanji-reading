@@ -1,6 +1,6 @@
 ---
 title: アーキテクチャ設計
-description: システム構成・データモデル・インフラ設計
+description: システム構成・インフラ設計
 ---
 
 > ステータス: **draft**
@@ -34,39 +34,7 @@ flowchart TB
 
 ## データモデル
 
-{/* TODO: 主要エンティティの ER 図を記載。詳細なテーブル定義は実装フェーズで別途作成 */}
-
-```mermaid
-erDiagram
-    USERS ||--o{ ORDERS : "登録する"
-    CUSTOMERS ||--o{ ORDERS : "発注する"
-    ORDERS ||--|{ ORDER_ITEMS : "含む"
-
-    USERS {
-        bigint id PK
-        string name
-        string email
-        string password_hash
-    }
-    CUSTOMERS {
-        bigint id PK
-        string name
-    }
-    ORDERS {
-        bigint id PK
-        string order_number
-        date ordered_at
-        bigint customer_id FK
-        bigint created_by FK
-    }
-    ORDER_ITEMS {
-        bigint id PK
-        bigint order_id FK
-        string item_name
-        int quantity
-        int unit_price
-    }
-```
+詳細は [ER図](/design/er-diagram) を参照。
 
 ## インフラ・環境構成
 
@@ -80,6 +48,8 @@ erDiagram
 
 ## セキュリティ設計
 
+実現方式の詳細は [非機能設計](/design/nfr-spec) を参照。ここではインフラ・アーキテクチャ観点の要点のみ記載する。
+
 {/* TODO: NFR のセキュリティ要件に対応させて記載 */}
 
 - 例: 全通信を TLS 1.2 以上で暗号化(NFR-003)
@@ -87,6 +57,8 @@ erDiagram
 - 例: 権限は管理者/一般の 2 ロール
 
 ## 運用設計
+
+実現方式の詳細は [非機能設計](/design/nfr-spec) を参照。ここではインフラ・アーキテクチャ観点の要点のみ記載する。
 
 {/* TODO: バックアップ・監視・障害対応の方針を記載。運用費用見積もりの根拠になる */}
 

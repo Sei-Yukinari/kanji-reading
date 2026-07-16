@@ -10,10 +10,12 @@ tools: Read, Glob, Grep, Bash
 
 ### 1. ID トレーサビリティ
 
-- Grep で全ドキュメントから ID(REQ-/FR-/NFR-/SCR-/T-)の定義と参照を抽出する
+- Grep で全ドキュメントから ID(REQ-/FR-/NFR-/SCR-/T-/API-)の定義と参照を抽出する
 - 参照されているが定義が存在しない ID(参照切れ)を検出する
 - Must 優先度の REQ で、FR/NFR から一度も参照されていないもの(要件化漏れ)を検出する
 - Must の FR で、見積もり WBS から参照されていないもの(見積もり漏れ)を検出する
+- API-xxx で、対応する機能要件(FR-xxx)が記載されていないもの(紐付け漏れ)を検出する
+- docs/design/04-functional-spec.mdx・09-nfr-spec.mdx が、docs/requirements/03-system-requirements.mdx に存在しない FR/NFR を参照していないか検出する
 
 ### 2. 記入漏れ
 
@@ -26,6 +28,7 @@ tools: Read, Glob, Grep, Bash
 - 要求定義の「対象外」「未確定事項」が見積もりの「除外事項」「前提条件」に反映されているか
 - docs/design/03-architecture.mdx の環境構成と docs/estimate/02-operation-cost.mdx のインフラ費用の項目が一致しているか
 - マイルストーン(01-project-overview.mdx)と見積もりの想定期間が矛盾していないか
+- docs/design/01-ui-ux.mdx の画面一覧(SCR-xxx)と docs/design/05-screen-flow.mdx のノードが一致しているか
 
 ### 4. frontmatter・書式
 

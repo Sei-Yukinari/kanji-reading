@@ -49,6 +49,7 @@ description: 1行の説明文
 | BF-xxx | 業務 | docs/requirements/13-business-flow.mdx |
 | SCR-xxx | 画面 | docs/design/01-ui-ux.mdx |
 | T-xxx | 技術選定の比較表 | docs/design/02-tech-stack.mdx |
+| API-xxx | APIエンドポイント | docs/design/08-api-list.mdx |
 
 - ID は 001 から連番で採番し、削除しても欠番を再利用しない
 - ID を参照するときは定義場所へのリンクではなく ID 表記のみで良い(検索可能性を優先)

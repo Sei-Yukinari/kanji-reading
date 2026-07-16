@@ -1,11 +1,11 @@
 ---
 name: design
-description: 要件定義を入力として設計ドキュメント(UI/UX・技術選定・アーキテクチャ)を作成・更新する。要件定義が固まった後に使用。
+description: 要件定義を入力として設計ドキュメント(UI/UX・技術選定・アーキテクチャ・機能設計・画面遷移図・シーケンス図・ER図・API一覧・非機能設計)を作成・更新する。要件定義が固まった後に使用。
 ---
 
 # 設計ドキュメント作成スキル
 
-docs/design/ 配下の 3 ドキュメントを、要件定義に基づいて作成・更新する。
+docs/design/ 配下の 9 ドキュメントを、要件定義に基づいて作成・更新する。
 
 ## 手順
 
@@ -31,12 +31,19 @@ AskUserQuestion で以下を確認する(既に docs に記載があればスキ
 
 `.claude/rules/documentation.md` の書式・ID 採番規則に従い、以下を作成する:
 
-1. `docs/design/01-ui-ux.mdx` — 画面一覧(SCR-xxx、FR に紐付け)・画面遷移図(mermaid)・共通 UI ルール
+1. `docs/design/01-ui-ux.mdx` — 画面一覧(SCR-xxx、FR に紐付け)・デザイン方針・共通 UI ルール
 2. `docs/design/02-tech-stack.mdx` — 比較表(T-xxx)・選定理由・不採用理由・リスク
-3. `docs/design/03-architecture.mdx` — 構成図・ER 図(mermaid)・環境構成・セキュリティ/運用設計(NFR に紐付け)
+3. `docs/design/03-architecture.mdx` — 構成図・コンポーネント設計・環境構成・セキュリティ/運用設計(NFR に紐付け)
+4. `docs/design/04-functional-spec.mdx` — 機能要件(FR)ごとの処理仕様・入出力・業務ルール・エラーハンドリング
+5. `docs/design/05-screen-flow.mdx` — 画面遷移図(mermaid)・遷移条件
+6. `docs/design/06-sequence-flow.mdx` — 主要フロー(UC-xxx)のシーケンス図(mermaid)。専用IDは採番せず UC-xxx に紐付ける
+7. `docs/design/07-er-diagram.mdx` — ER 図(mermaid)・エンティティ一覧
+8. `docs/design/08-api-list.mdx` — API 一覧(API-xxx、FR に紐付け)・リクエスト/レスポンス仕様
+9. `docs/design/09-nfr-spec.mdx` — 非機能要件(NFR)ごとの実現方式・実装詳細
 
 - 技術選定はユーザーの最終判断を仰ぐ: 比較表と推奨案を提示し、承認を得てから「採用」と記載する
 - 運用設計・環境構成は見積もり(運用費用)の根拠になるため、具体的なインスタンスサイズまで記載する
+- 機能設計・非機能設計は要件定義側の FR/NFR 定義を再定義しない。設計視点の詳細化のみ行う
 
 ### 5. 完了報告
 
