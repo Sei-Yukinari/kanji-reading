@@ -1,0 +1,42 @@
+erDiagram
+    GRADE ||--|{ UNIT : "分割する"
+    UNIT ||--|{ KANJI : "含む"
+    KANJI ||--|{ READING : "持つ"
+    READING ||--|{ QUESTION : "正解になる"
+    KANJI ||--|{ QUESTION : "出題される"
+
+    GRADE {
+        int grade PK "1〜6"
+        int kanji_count
+    }
+    UNIT {
+        string unit_id PK "例: g3-u05"
+        int grade FK
+        int order
+        string title
+    }
+    KANJI {
+        string kanji PK "例: 山"
+        int grade FK
+        string unit_id FK
+        int order
+    }
+    READING {
+        string reading_id PK "例: 山-on-さん"
+        string kanji FK
+        string type "on / kun / special"
+        string kana "ひらがな"
+        string okurigana "訓読みの送り仮名"
+    }
+    QUESTION {
+        string question_id PK "例: Q-山-02"
+        string kanji FK
+        string reading_id FK
+        string format "single / word / sentence"
+        string prompt "表示文字列"
+        json ruby "ルビ範囲と読み"
+        json highlight "下線範囲"
+        string answer "正解のひらがな"
+        json distractors "誤答3件"
+        string audio "音声ファイルパス"
+    }

@@ -1,0 +1,31 @@
+sequenceDiagram
+    actor P as 保護者
+    participant UI as 画面
+    participant SW as Service Worker
+    participant CDN as Vercel CDN
+    participant C as Cache Storage
+    participant DB as IndexedDB
+
+    P->>UI: URL にアクセス
+    UI->>CDN: HTML/JS/CSS を取得
+    CDN-->>UI: アプリ本体
+    UI->>SW: Service Worker を登録
+    SW->>CDN: precache 対象を取得(本体・フォント・効果音・API-001・API-002)
+    CDN-->>SW: 各ファイル
+    SW->>C: 保存
+    UI->>DB: 永続化を要求 navigator.storage.persist()
+    alt iOS の Safari タブで起動(代替フロー)
+        UI-->>P: SCR-010 ホーム画面追加の案内を先に表示
+        P->>UI: ホーム画面に追加し、アイコンから起動し直す
+    end
+    UI-->>P: SCR-002 プロフィール作成
+    P->>UI: ニックネーム・アイコンを入力
+    UI->>DB: PROFILE・SETTINGS を保存
+    UI-->>P: SCR-003 ホーム
+    UI->>SW: 選択中の学年の音声を取得要求
+    SW->>CDN: API-003 を順次取得
+    SW->>C: 保存
+    UI->>SW: 残りの学年の音声をバックグラウンドで取得
+    opt 取得中に通信が切れた場合(例外フロー)
+        SW-->>UI: 未取得分を記録し、次回オンライン時に再開
+    end

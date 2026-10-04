@@ -1,0 +1,31 @@
+flowchart TB
+    subgraph Dev["開発環境(開発 PC)"]
+        Src["ソースコード<br/>Next.js + TypeScript"]
+        Data["問題データ原稿"]
+        Gen["データ生成・検証スクリプト"]
+        VV["VOICEVOX エンジン<br/>Docker"]
+        Data --> Gen
+        Gen -->|読みのかな| VV
+        VV -->|音声 m4a| Gen
+    end
+    subgraph GH["GitHub"]
+        Repo["リポジトリ"]
+    end
+    subgraph Vercel["Vercel Pro"]
+        Build["ビルド<br/>next build + 検証"]
+        CDN["CDN<br/>静的ファイル配信"]
+    end
+    subgraph Device["利用者の端末(ブラウザ / ホーム画面アプリ)"]
+        UI["画面<br/>React"]
+        SW["Service Worker<br/>Serwist"]
+        Cache[("Cache Storage<br/>本体・問題データ・音声・フォント")]
+        IDB[("IndexedDB<br/>学習データ")]
+        UI --> SW
+        SW --> Cache
+        UI --> IDB
+    end
+    Src --> Repo
+    Gen -->|JSON・音声| Repo
+    Repo -->|push| Build
+    Build --> CDN
+    SW -->|HTTPS 初回・更新時のみ| CDN

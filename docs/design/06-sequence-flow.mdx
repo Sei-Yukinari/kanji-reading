@@ -1,49 +1,37 @@
 ---
 title: シーケンス図
-description: 主要フロー(ユースケース)のアクター・システム間のやり取り
+description: 漢字読み学習アプリの主要フロー(ユースケース)における画面・端末内コンポーネント・配信サーバー間のやり取り
 ---
 
 > ステータス: **draft**
 
-[ユースケース](/requirements/use-case)の主要フロー(UC-xxx)について、画面・API・データベース間のやり取りを詳細化します。専用IDは採番せず、UC-xxxに対応付けます。複数UCにまたがる横断フローは見出しに対象UCを併記します(例: `### 主要フロー: 入出庫記録〜在庫確認(UC-001, UC-002)`)。
+[ユースケース](/requirements/use-case)の主要フロー(UC-xxx)について、画面・API・データベース間のやり取りを詳細化します。専用IDは採番せず、UC-xxxに対応付けます。複数UCにまたがる横断フローは見出しに対象UCを併記します(例: `### 主要フロー: 練習〜習得状況の確認(UC-001, UC-004)`)。
+
+本アプリのデータベースは端末内の IndexedDB、API は CDN の静的ファイル(Service Worker 経由)である。
 
 ## 対象フロー一覧
 
-{/* TODO: 設計判断が必要な主要フローのみ記載。UC-xxxは12-use-case.mdxの定義と一致させる */}
-
 | 対応UC | フロー名 | 概要 | 関連画面 | 関連API |
 | --- | --- | --- | --- | --- |
-| UC-001 | 例: 入出庫を記録する | 商品の入庫・出庫数を登録し在庫数を更新する | SCR-xxx | API-xxx |
+| UC-006 | 初回アクセス〜オフライン化 | アプリ本体・問題データの precache、ホーム画面追加の案内、音声のバックグラウンド取得 | SCR-010, SCR-002 | API-001, API-002, API-003 |
+| UC-001 | 学年・単元を選んで練習する | 出題セット生成から正誤判定・結果保存まで | SCR-003〜SCR-006 | API-002, API-003 |
+| UC-002 | タイムアタックに挑戦する | 計測・ペナルティ・自己ベスト更新 | SCR-003, SCR-005, SCR-006 | API-002 |
+| UC-009 | 問題データを更新・公開する | 原稿修正からデプロイ、端末側の更新反映まで | — | API-001, API-002 |
 
 ## フロー詳細
 
-{/* TODO: 12-use-case.mdxのユースケース記述を前提に、画面・API・DBまで具体化する */}
+### UC-006: 初回アクセス〜オフライン化
 
-### UC-001: 例: 入出庫を記録する
+![UC-006: 初回アクセス〜オフライン化](/diagrams/design-06-sequence-flow-01.svg)
 
-```mermaid
-sequenceDiagram
-    actor U as 在庫管理担当
-    participant SCR as SCR-xxx 入出庫登録画面
-    participant API as API-xxx 入出庫登録API
-    participant DB as 在庫DB
+### UC-001: 学年・単元を選んで練習する
 
-    U->>SCR: 商品を検索(またはバーコードをスキャン)
-    SCR->>API: GET /products/{id}
-    alt 商品が見つからない場合(代替フロー)
-        API-->>SCR: 404
-        SCR-->>U: 新規登録画面を表示
-    end
-    API-->>SCR: 商品情報と現在庫数
-    SCR-->>U: 商品情報と現在庫数を表示
-    U->>SCR: 入庫/出庫の区分と数量を入力し保存を押下
-    SCR->>API: POST /stock-movements
-    opt 出庫数が在庫数を超える場合(例外フロー)
-        API-->>SCR: 400 警告メッセージ
-        SCR-->>U: 警告を表示し確認を求める
-    end
-    API->>DB: 在庫数をUPDATE、履歴をINSERT
-    DB-->>API: 更新完了
-    API-->>SCR: 200 完了
-    SCR-->>U: 完了を表示
-```
+![UC-001: 学年・単元を選んで練習する](/diagrams/design-06-sequence-flow-02.svg)
+
+### UC-002: タイムアタックに挑戦する
+
+![UC-002: タイムアタックに挑戦する](/diagrams/design-06-sequence-flow-03.svg)
+
+### UC-009: 問題データを更新・公開する
+
+![UC-009: 問題データを更新・公開する](/diagrams/design-06-sequence-flow-04.svg)

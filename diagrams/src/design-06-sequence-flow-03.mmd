@@ -1,0 +1,34 @@
+sequenceDiagram
+    actor S as 学習者
+    participant UI as SCR-005, SCR-006
+    participant EN as 出題エンジン
+    participant DB as IndexedDB
+
+    S->>UI: 「タイムアタック」をタップ
+    UI->>EN: セット生成(time_attack, 学年)
+    EN-->>UI: ランダム 10 問
+    UI-->>S: 3 秒カウントダウン
+    loop 10 問
+        UI->>UI: 計測再開
+        UI-->>S: 問題を表示
+        S->>UI: 選択肢をタップ
+        UI->>UI: 計測停止・回答時間を加算
+        UI->>EN: 判定
+        EN-->>UI: 正誤
+        alt 不正解
+            UI->>UI: 5 秒加算
+        end
+        UI-->>S: 正誤を短く表示(0.5 / 1.0 秒)
+    end
+    opt アプリがバックグラウンドに移った場合(例外フロー)
+        UI->>UI: 計測停止
+        UI-->>S: 復帰時に「つづける / やめる」
+    end
+    UI->>DB: BEST_RECORD を取得
+    alt 自己ベスト更新
+        UI->>DB: SESSION・BEST_RECORD・メダルを保存
+        UI-->>S: 「じこベスト こうしん!」
+    else 更新なし
+        UI->>DB: SESSION を保存
+        UI-->>S: 記録と自己ベストを表示
+    end

@@ -1,4 +1,5 @@
 ---
+draft: true
 title: 業務フロー
 description: 現状(As-Is)と導入後(To-Be)の業務フロー
 ---
@@ -22,19 +23,7 @@ description: 現状(As-Is)と導入後(To-Be)の業務フロー
 
 ### BF-001: 例: 入出庫記録(As-Is)
 
-```mermaid
-flowchart LR
-    subgraph Genba["現場(倉庫)"]
-        A[入出荷の発生] --> B[紙の記録票に手書き]
-    end
-    subgraph Jimusho["事務所"]
-        B --> C["Excel へ転記(夕方まとめて)"]
-        C --> D{記録票と一致?}
-        D -->|NG| E[現場へ確認・手戻り]
-        E --> C
-        D -->|OK| F[在庫表を更新]
-    end
-```
+![BF-001: 例: 入出庫記録(As-Is)](/diagrams/requirements-13-business-flow-01.svg)
 
 - 例: 課題: 転記は夕方まとめて行うため、日中の在庫数がリアルタイムに分からない
 
@@ -44,20 +33,7 @@ flowchart LR
 
 ### BF-001: 例: 入出庫記録(To-Be)
 
-```mermaid
-flowchart LR
-    subgraph Genba["現場(倉庫)"]
-        A[入出荷の発生] --> B[スマートフォンでその場で記録]
-    end
-    subgraph SystemArea["在庫管理システム(今回開発)"]
-        B --> C[入力チェック]
-        C --> D[(在庫DB)]
-        D --> E[在庫一覧・集計を自動更新]
-    end
-    subgraph Jimusho["事務所"]
-        E --> F[確認のみ]
-    end
-```
+![BF-001: 例: 入出庫記録(To-Be)](/diagrams/requirements-13-business-flow-02.svg)
 
 ## As-Is / To-Be の差分と効果
 

@@ -1,53 +1,96 @@
 ---
 title: API一覧
-description: エンドポイント一覧・リクエスト/レスポンス仕様
+description: 漢字読み学習アプリが取得する静的データエンドポイントの一覧・仕様
 ---
 
 > ステータス: **draft**
 
-システムが提供するAPIエンドポイントを一覧化します。
+本アプリはサーバー処理を持たないため、API はすべて **CDN から配信する静的ファイルの取得(GET)** である。ビルド時に生成したファイルを Service Worker 経由で取得・キャッシュする。書き込み系の API は存在しない。
 
 ## API一覧
 
-{/* TODO: IDは API-001 から連番で採番。対応する機能要件を必ず紐付ける */}
-
 | ID | メソッド | パス | 概要 | 対応要件 | 認証要否 |
 | --- | --- | --- | --- | --- | --- |
-| API-001 | POST | 例: /orders | 受注を登録する | FR-001 | 要 |
-| API-002 | GET | 例: /orders | 受注を検索・一覧取得する | FR-002 | 要 |
+| API-001 | GET | `/data/manifest.json` | 問題データのバージョン・学年・単元・各ファイルのハッシュを取得する | FR-015, FR-019, FR-021 | 不要 |
+| API-002 | GET | `/data/grade-{grade}.{hash}.json` | 学年の漢字・読み・問題を取得する | FR-003〜FR-006, FR-021, FR-022 | 不要 |
+| API-003 | GET | `/audio/{grade}/{audioId}.m4a` | 正解の読みの音声を取得する | FR-009 | 不要 |
 
 ## API詳細
 
-{/* TODO: 主要APIごとにリクエスト/レスポンスを記載 */}
-
-### API-001: 例: 受注登録
+### API-001: 問題データ manifest
 
 #### リクエスト
 
-| 項目 | 型 | 必須 | 説明 |
-| --- | --- | --- | --- |
-| customerId | bigint | ○ | 顧客ID |
-| orderedAt | date | ○ | 受注日 |
-| items | 配列 | ○ | 受注明細 |
+パラメータなし。Service Worker の precache 対象。
 
 #### レスポンス
 
 | フィールド | 型 | 説明 |
 | --- | --- | --- |
-| id | bigint | 受注ID |
-| orderNumber | string | 受注番号 |
+| schemaVersion | int | データ形式のバージョン。アプリが対応していない値の場合は読み込まない |
+| dataVersion | string | 問題データのバージョン(例: `2027.01.0`) |
+| grades | 配列 | 学年ごとの情報 |
+| grades[].grade | int | 1〜6 |
+| grades[].file | string | API-002 のパス(ハッシュ付き) |
+| grades[].kanjiCount | int | 漢字数 |
+| grades[].units | 配列 | 単元(unitId, order, title, kanji[]) |
+| grades[].audioBytes | int | 学年の音声の合計サイズ(ダウンロード進捗表示用) |
+| removedQuestionIds | string[] | 削除済みの問題 ID(学習データの参照切れ除去に使う) |
 
-#### エラーレスポンス
+### API-002: 学年別問題データ
 
-| HTTPステータス | 条件 | メッセージ |
+#### リクエスト
+
+| 項目 | 型 | 必須 | 説明 |
+| --- | --- | --- | --- |
+| grade | int(パス) | ○ | 1〜6 |
+| hash | string(パス) | ○ | 内容ハッシュ。内容が変わるとファイル名が変わる |
+
+#### レスポンス
+
+| フィールド | 型 | 説明 |
 | --- | --- | --- |
-| 400 | 入力値不正 | バリデーションエラー内容 |
-| 404 | 顧客が存在しない | 「顧客が見つかりません」 |
+| grade | int | 学年 |
+| kanji | 配列 | 漢字(kanji, unitId, order, readings[]) |
+| kanji[].readings[] | 配列 | 読み(readingId, type, kana, okurigana) |
+| questions | 配列 | 問題 |
+| questions[].questionId | string | 問題 ID(公開後は不変) |
+| questions[].kanji | string | 出題漢字 |
+| questions[].readingId | string | 正解の読み ID |
+| questions[].format | enum | single / word / sentence |
+| questions[].prompt | string | 表示文字列 |
+| questions[].ruby | 配列 | ルビ(start, length, kana) |
+| questions[].highlight | object | 下線範囲(start, length)。sentence のみ |
+| questions[].answer | string | 正解(ひらがな) |
+| questions[].distractors | string[3] | 誤答 3 件(ひらがな) |
+| questions[].audioId | string | API-003 の音声 ID |
+
+### API-003: 読み上げ音声
+
+#### リクエスト
+
+| 項目 | 型 | 必須 | 説明 |
+| --- | --- | --- | --- |
+| grade | int(パス) | ○ | 1〜6 |
+| audioId | string(パス) | ○ | 読みのかな文字列と生成設定から算出したハッシュ |
+
+#### レスポンス
+
+AAC(`audio/mp4`)、モノラル 32kbps。
+
+### エラーレスポンス
+
+| HTTPステータス | 条件 | アプリの動作 |
+| --- | --- | --- |
+| 404 | 古いアプリが削除済みファイルを要求 | manifest を再取得して再試行。失敗時は該当学年を選択不可にする |
+| ネットワークエラー | オフライン | キャッシュがあればキャッシュを使用。なければ [機能設計](/design/functional-spec) のエラーハンドリングに従う |
 
 ## 共通仕様
 
-{/* TODO: プロジェクト共通のAPI規約を記載 */}
-
-- 例: 認証は Bearer トークン方式(NFR-003)
-- 例: エラーレスポンスは `{ "code": string, "message": string }` 形式で統一
-- 例: 一覧系APIは `page` / `perPage` クエリパラメータでページネーション
+- 認証なし。すべて公開の静的ファイル
+- 応答ヘッダー
+  - `/data/manifest.json`・`/sw.js`: `Cache-Control: no-cache`(更新を検知するため)
+  - ハッシュ付きファイル(API-002、JS/CSS、フォント): `Cache-Control: public, max-age=31536000, immutable`
+  - 音声(API-003): `Cache-Control: public, max-age=31536000, immutable`(ID が内容ハッシュのため)
+- 圧縮: JSON は Vercel の自動圧縮(gzip / brotli)を利用
+- 外部サービスへのリクエストは行わない

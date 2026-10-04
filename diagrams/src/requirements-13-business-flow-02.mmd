@@ -1,0 +1,12 @@
+flowchart LR
+    subgraph Genba["現場(倉庫)"]
+        A[入出荷の発生] --> B[スマートフォンでその場で記録]
+    end
+    subgraph SystemArea["在庫管理システム(今回開発)"]
+        B --> C[入力チェック]
+        C --> D[(在庫DB)]
+        D --> E[在庫一覧・集計を自動更新]
+    end
+    subgraph Jimusho["事務所"]
+        E --> F[確認のみ]
+    end

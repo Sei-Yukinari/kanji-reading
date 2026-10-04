@@ -1,0 +1,24 @@
+sequenceDiagram
+    actor O as 運営者
+    participant G as GitHub
+    participant V as Vercel
+    participant SW as Service Worker(端末)
+    participant UI as 画面(端末)
+    participant DB as IndexedDB(端末)
+
+    O->>O: 原稿を修正し、生成・検証スクリプトと音声生成を実行
+    O->>G: PR を作成
+    G->>V: Preview デプロイ(ビルド時に検証)
+    alt 検証エラー(例外フロー)
+        V-->>O: ビルド失敗を通知
+    end
+    O->>V: Preview で確認
+    O->>G: main へマージ
+    G->>V: Production デプロイ
+    Note over SW,UI: 以降、端末がオンラインで起動したとき
+    SW->>V: sw.js・API-001 を確認
+    V-->>SW: 新バージョン
+    SW->>SW: 新しい precache を取得(待機状態)
+    Note over SW,UI: 出題中は切り替えない
+    UI->>SW: 次回起動時に新バージョンへ切替
+    UI->>DB: removedQuestionIds の参照を除去

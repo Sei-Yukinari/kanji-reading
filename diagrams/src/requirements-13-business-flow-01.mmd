@@ -1,0 +1,11 @@
+flowchart LR
+    subgraph Genba["現場(倉庫)"]
+        A[入出荷の発生] --> B[紙の記録票に手書き]
+    end
+    subgraph Jimusho["事務所"]
+        B --> C["Excel へ転記(夕方まとめて)"]
+        C --> D{記録票と一致?}
+        D -->|NG| E[現場へ確認・手戻り]
+        E --> C
+        D -->|OK| F[在庫表を更新]
+    end

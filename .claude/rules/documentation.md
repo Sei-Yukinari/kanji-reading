@@ -32,6 +32,7 @@ description: 1行の説明文
 - 見出しレベルはスキップしない(h2 の次は h3)
 - docs/ 配下のドキュメントはすべて `.mdx` で作成する(Blume は `.md` 内の mermaid をコードブロックのまま表示するため)
 - 図は mermaid で記述する(flowchart / erDiagram / sequenceDiagram / journey / mindmap / quadrantChart)。表で書ける内容でも、構造・時系列・位置づけは図を優先する。画像は補助的に使用
+- 図のソースは `diagrams/src/<doc-slug>-NN.mmd` に置き、`npm run docs:diagrams:render` で `public/diagrams/*.svg` を生成し、本文では `![見出し](/diagrams/<name>.svg)` で参照する(ビジネス側にも閲覧しやすいよう画像で表示)。新しい図は本文に mermaid ブロックで書いてから `npm run docs:diagrams` を実行すれば自動で SVG 化・置換される
 - mermaid のノード・subgraph ラベルに半角括弧やコロン等の記号を含む場合は `"..."` で囲む(例: `subgraph Cloud["クラウド(例: AWS)"]`)
 - 日付は `YYYY/MM/DD`、金額は `¥1,000,000` または `1,000,000 円`(税抜/税込を明記)
 - 未記入箇所は `{/* TODO: ... */}` コメントで残し、記入例は「例:」プレフィックスを付ける。MDX では HTML コメント `<!-- -->` が構文エラーになるため使用しない

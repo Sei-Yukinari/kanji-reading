@@ -1,0 +1,18 @@
+flowchart LR
+    subgraph A1["例: 商品を登録する"]
+        direction TB
+        A1M["MVP: 1 件ずつ登録できる"] --> A1R["R2: CSV で一括登録できる"]
+    end
+    subgraph A2["例: 入出庫を記録する"]
+        direction TB
+        A2M["MVP: 手入力で記録できる"] --> A2R["R2: バーコードで記録できる"] --> A2F["将来: オフラインでも記録できる"]
+    end
+    subgraph A3["例: 在庫を確認する"]
+        direction TB
+        A3M["MVP: 在庫数を一覧で見られる"] --> A3R["R2: 在庫金額を集計できる"] --> A3F["将来: 発注点アラートが届く"]
+    end
+    subgraph A4["例: 棚卸しする"]
+        direction TB
+        A4M["MVP: 実在庫を入力して差異を見られる"] --> A4R["R2: 結果を PDF 出力できる"]
+    end
+    A1 --> A2 --> A3 --> A4

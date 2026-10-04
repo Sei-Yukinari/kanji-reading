@@ -1,62 +1,59 @@
 ---
 title: ER図
-description: データモデルのエンティティ関連
+description: 漢字読み学習アプリのデータモデル(問題データ・端末内学習データ)
 ---
 
 > ステータス: **draft**
 
 [アーキテクチャ設計](/design/architecture)のコンポーネント設計を前提に、データモデルを図示します。詳細なカラム定義・制約は実装フェーズで別途作成します。
 
+本アプリはサーバー側にデータベースを持たない。データは次の 2 種類に分かれる。
+
+| 区分 | 保存場所 | 更新者 | 内容 |
+| --- | --- | --- | --- |
+| 問題データ(マスタ) | 静的 JSON ファイル(ビルド時に生成し CDN 配信、端末にキャッシュ) | 運営者(リリースで更新) | 学年・単元・漢字・読み・問題 |
+| 学習データ | 端末内の IndexedDB | 学習者の操作 | プロフィール・設定・解答履歴・習得状況・記録・メダル |
+
 ## ER図
 
-{/* TODO: 主要エンティティのER図を記載。詳細なテーブル定義は実装フェーズで別途作成 */}
+### 問題データ(マスタ)
 
-```mermaid
-erDiagram
-    USERS ||--o{ ORDERS : "登録する"
-    CUSTOMERS ||--o{ ORDERS : "発注する"
-    ORDERS ||--|{ ORDER_ITEMS : "含む"
+![問題データ(マスタ)](/diagrams/design-07-er-diagram-01.svg)
 
-    USERS {
-        bigint id PK
-        string name
-        string email
-        string password_hash
-    }
-    CUSTOMERS {
-        bigint id PK
-        string name
-    }
-    ORDERS {
-        bigint id PK
-        string order_number
-        date ordered_at
-        bigint customer_id FK
-        bigint created_by FK
-    }
-    ORDER_ITEMS {
-        bigint id PK
-        bigint order_id FK
-        string item_name
-        int quantity
-        int unit_price
-    }
-```
+### 学習データ(端末内)
+
+![学習データ(端末内)](/diagrams/design-07-er-diagram-02.svg)
 
 ## エンティティ一覧
 
-{/* TODO: 対応する機能要件を必ず紐付ける */}
+### 問題データ
 
 | エンティティ | 概要 | 主なリレーション | 対応要件 |
 | --- | --- | --- | --- |
-| USERS | システム利用者 | ORDERS を作成する | NFR-003 |
-| CUSTOMERS | 発注元の顧客 | ORDERS を発注する | FR-001 |
-| ORDERS | 受注 | ORDER_ITEMS を含む | FR-001, FR-002 |
-| ORDER_ITEMS | 受注明細 | ORDERS に属する | FR-001 |
+| GRADE | 学年(1〜6) | UNIT に分割される | FR-001 |
+| UNIT | 学年内の単元(約 20 字ずつ) | KANJI を含む | FR-015 |
+| KANJI | 学年別漢字配当表の漢字(1,026 字) | READING を持つ | FR-021 |
+| READING | 小学校で扱う音訓(1 漢字に複数) | QUESTION の正解になる | FR-021, FR-014 |
+| QUESTION | 4 択問題(3 形式)。誤答・ルビ・音声パスを含む | KANJI・READING に属する | FR-003〜FR-006, FR-009, FR-022 |
+
+### 学習データ
+
+| エンティティ | 概要 | 主なリレーション | 対応要件 |
+| --- | --- | --- | --- |
+| PROFILE | 学習者プロフィール(上限 4 件) | 全学習データの親 | FR-016, FR-017 |
+| SETTINGS | 効果音・読み上げの設定 | PROFILE と 1 対 1 | FR-010 |
+| SESSION | 1 セットの実施結果 | ANSWER を含む | FR-002, FR-011 |
+| ANSWER | 1 問ごとの解答 | SESSION に属する | FR-007, FR-014 |
+| READING_PROGRESS | 読みごとの連続正解数・習得状態。漢字の習得状況はここから算出 | PROFILE に属する | FR-014 |
+| REVIEW_ITEM | 復習対象の問題 | PROFILE に属する | FR-013 |
+| BEST_RECORD | タイムアタックの学年別自己ベスト | PROFILE に属する | FR-011 |
+| MEDAL_AWARD | 獲得したメダル | PROFILE に属する | FR-012 |
 
 ## 備考
 
-{/* TODO: 命名規約・共通カラムのルールを記載 */}
-
-- 例: 論理削除は `deleted_at` カラムで管理する
-- 例: 全テーブルに `created_at` / `updated_at` を付与する
+- 問題データの ID は人が読める形式(漢字・読みを含む)とし、データ修正時に差分を追いやすくする。ID は一度公開したら変更しない(学習データが参照するため)
+- 問題データを修正して問題を削除した場合、学習データ側の参照切れ(REVIEW_ITEM 等)は起動時に除去する
+- 学習データのスキーマにはバージョン番号を持たせ、スキーマ変更時は起動時にマイグレーションする
+- 「漢字の習得済み」は保存せず、READING_PROGRESS から算出する(漢字の全読みが mastered のとき習得済み)
+- 連続学習日数は SESSION.finished_at から算出する
+- ANSWER は端末容量を考慮し、プロフィールあたり直近 5,000 件を上限に古いものから削除する

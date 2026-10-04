@@ -1,0 +1,65 @@
+erDiagram
+    PROFILE ||--|| SETTINGS : "持つ"
+    PROFILE ||--o{ SESSION : "実施する"
+    SESSION ||--|{ ANSWER : "含む"
+    PROFILE ||--o{ READING_PROGRESS : "記録する"
+    PROFILE ||--o{ REVIEW_ITEM : "持つ"
+    PROFILE ||--o{ BEST_RECORD : "持つ"
+    PROFILE ||--o{ MEDAL_AWARD : "獲得する"
+
+    PROFILE {
+        string profile_id PK "UUID"
+        string nickname "1〜10文字"
+        string icon
+        int last_grade
+        datetime created_at
+    }
+    SETTINGS {
+        string profile_id PK
+        bool sound_effect
+        bool voice
+    }
+    SESSION {
+        string session_id PK
+        string profile_id FK
+        string mode "practice / time_attack / review"
+        int grade
+        string unit_id "practice のみ"
+        int correct_count
+        int total_count
+        int elapsed_ms "time_attack のみ"
+        datetime finished_at
+    }
+    ANSWER {
+        string session_id FK
+        int seq
+        string question_id
+        string reading_id
+        bool is_correct
+        int response_ms
+    }
+    READING_PROGRESS {
+        string profile_id PK
+        string reading_id PK
+        int correct_streak
+        int answer_count
+        string status "learning / mastered"
+        datetime last_answered_at
+    }
+    REVIEW_ITEM {
+        string profile_id PK
+        string question_id PK
+        int grade
+        datetime added_at
+    }
+    BEST_RECORD {
+        string profile_id PK
+        int grade PK
+        int best_ms
+        datetime achieved_at
+    }
+    MEDAL_AWARD {
+        string profile_id PK
+        string medal_id PK
+        datetime awarded_at
+    }

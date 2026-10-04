@@ -1,0 +1,36 @@
+sequenceDiagram
+    actor S as 学習者
+    participant UI as SCR-003〜006
+    participant EN as 出題エンジン
+    participant DL as 問題データローダー
+    participant SP as サウンドプレイヤー
+    participant DB as IndexedDB
+
+    S->>UI: 「れんしゅう」→ 単元をタップ
+    UI->>DL: 学年の問題データを要求
+    DL-->>UI: 問題データ(キャッシュから API-002)
+    UI->>DB: READING_PROGRESS を取得
+    DB-->>UI: 読みごとの習得状況
+    UI->>EN: セット生成(practice, 学年, 単元, 習得状況)
+    EN-->>UI: 10 問(選択肢をシャッフル済み)
+    UI->>SP: AudioContext をアンロック(タップ起点)
+    loop 10 問
+        UI-->>S: 問題と 4 択を表示
+        S->>UI: 選択肢をタップ
+        UI->>EN: 判定(問題, 選択肢)
+        EN-->>UI: 正誤・正解
+        UI->>SP: 効果音・読み上げを再生(設定 ON の場合)
+        alt 音声が未取得の場合(代替フロー)
+            SP-->>UI: 読み上げをスキップ
+        end
+        UI-->>S: 正誤・正しい読みを表示
+        Note over UI: 正解 1.0 秒 / 不正解 2.0 秒、またはタップで次へ
+    end
+    UI->>EN: 集計(解答一覧, 現在の進捗, 獲得済みメダル)
+    EN-->>UI: SESSION・進捗更新・復習更新・新規メダル
+    UI->>DB: 1 トランザクションで保存
+    opt 保存に失敗した場合(例外フロー)
+        DB-->>UI: エラー
+        UI-->>S: 「きろくが ほぞんできませんでした」
+    end
+    UI-->>S: SCR-006 結果

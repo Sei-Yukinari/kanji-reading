@@ -1,0 +1,15 @@
+gantt
+    title 開発スケジュール(概算・13 週)
+    dateFormat YYYY-MM-DD
+    axisFormat %m/%d
+    section 設計
+    レビュー対応・ワイヤーフレーム・技術検証 :d1, 2026-10-12, 4w
+    section 開発
+    基盤・出題エンジン・画面 :d2, 2026-10-19, 9w
+    section 問題データ
+    元データ入力・下書き生成 :c1, 2026-10-12, 2w
+    人手チェック1回目・書き直し :c2, after c1, 5w
+    人手チェック2回目 :c3, after c2, 2w
+    音声生成・聴取 :c4, after c3, 2w
+    section テスト
+    テスト・受け入れ・リリース :t1, 2026-12-21, 3w

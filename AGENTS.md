@@ -39,6 +39,8 @@ docs/
 | `npm run docs:dev` | ドキュメントサイトの開発サーバー起動 |
 | `npm run docs:build` | 静的サイトビルド(`dist/` に出力) |
 | `npm run lint:md` | markdownlint 実行 |
+| `npm run docs:diagrams` | docs 内の mermaid ブロックを抽出し SVG 化(`public/diagrams/`)して画像参照へ置換 |
+| `npm run docs:diagrams:render` | `diagrams/src/*.mmd` を編集した後に SVG だけ再生成 |
 
 ## 注意事項
 

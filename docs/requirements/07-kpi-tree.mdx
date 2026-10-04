@@ -1,4 +1,5 @@
 ---
+draft: true
 title: KPI ツリー
 description: KGI を頂点とした KPI の分解と計測方法の定義
 ---
@@ -17,17 +18,7 @@ description: KGI を頂点とした KPI の分解と計測方法の定義
 
 {/* TODO: KGI を掛け算・足し算で分解する。分解の式が成り立つことを確認 */}
 
-```mermaid
-flowchart TD
-    KGI["KGI: 例: ARR 1 億円"] --> A["有料契約社数"]
-    KGI --> B["顧客単価(月額)"]
-    A --> C["新規契約数"]
-    A --> D["解約数"]
-    C --> E["無料トライアル登録数"]
-    C --> F["有料転換率"]
-    E --> G["サイト訪問数"]
-    E --> H["トライアル登録率"]
-```
+![KPI ツリー](/diagrams/requirements-07-kpi-tree-01.svg)
 
 ## KPI 一覧
 
