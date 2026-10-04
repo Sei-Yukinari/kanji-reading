@@ -1,0 +1,1167 @@
+# 3 年生の問題データ原稿
+# - 読みは「音訓の段階別割り振り表」の小学校で扱う音訓を収録(人手チェック前)
+# - 読みの表記: 送り仮名は "のぼ(る)" の形で書く
+# - 語幹が同じ自動詞・他動詞の組(例: 育つ / 育てる)は 1 年生原稿にならい、代表の 1 つを readings に入れ、残りは exclude に入れる
+# - exclude: 出題しないが正しい読み(常用漢字表の残りの音訓。中学校・高校で習うものを含む)。単漢字問題の誤答に使わないための除外リスト(人手チェック前)
+# - 熟語・例文: 出題漢字を例文では [ ] で囲む。未習漢字(4 年生以上)は {漢字|かな} でルビを付ける
+# - 単漢字問題と誤答は生成スクリプトが作る。熟語・例文の誤答はここに書く
+grade: 3
+kanji:
+  - kanji: 悪
+    readings: [{ on: あく }, { kun: わる(い) }]
+    exclude: [お]
+    words:
+      - { word: 悪人, kana: あくにん, reading: あく, distractors: [わるにん, あくじん, おにん] }
+    sentences:
+      - { text: "[悪]い ことを したら あやまる。", reading: わる, distractors: [あく, わり, おる] }
+  - kanji: 安
+    readings: [{ on: あん }, { kun: やす(い) }]
+    words:
+      - { word: 安心, kana: あんしん, reading: あん, distractors: [やすしん, あんじん, やすごころ] }
+    sentences:
+      - { text: "この ペンは [安]い。", reading: やす, distractors: [あん, やし, やさ] }
+  - kanji: 暗
+    readings: [{ on: あん }, { kun: くら(い) }]
+    words:
+      - { word: 暗記, kana: あんき, reading: あん, distractors: [くらき, あんぎ, おんき] }
+    sentences:
+      - { text: "外が [暗]く なった。", reading: くら, distractors: [あん, くろ, ぐら] }
+  - kanji: 医
+    readings: [{ on: い }]
+    words:
+      - { word: 医者, kana: いしゃ, reading: い, distractors: [いもの, いじゃ, えしゃ] }
+      - { word: 医学, kana: いがく, reading: い, distractors: [いかく, えがく, いまな] }
+  - kanji: 委
+    readings: [{ on: い }]
+    exclude: [ゆだ(ねる)]
+    words:
+      - { word: 委員, kana: いいん, reading: い, distractors: [ういん, いいいん, いきん] }
+  - kanji: 意
+    readings: [{ on: い }]
+    words:
+      - { word: 意見, kana: いけん, reading: い, distractors: [いげん, いけい, えけん] }
+  - kanji: 育
+    readings: [{ on: いく }, { kun: そだ(つ) }]
+    exclude: [そだ(てる), はぐく(む)]
+    words:
+      - { word: 教育, kana: きょういく, reading: いく, distractors: [おしえいく, きょういき, きょうそだ] }
+    sentences:
+      - { text: "大きく [育]った トマトを とる。", reading: そだ, distractors: [いく, はぐく, そら] }
+  - kanji: 員
+    readings: [{ on: いん }]
+    words:
+      - { word: 全員, kana: ぜんいん, reading: いん, distractors: [ぜいん, まったいん, ぜんえん] }
+  - kanji: 院
+    readings: [{ on: いん }]
+    words:
+      - { word: 病院, kana: びょういん, reading: いん, distractors: [やまいいん, びょうえん, ひょういん] }
+  - kanji: 飲
+    readings: [{ on: いん }, { kun: の(む) }]
+    words:
+      - { word: 飲食, kana: いんしょく, reading: いん, distractors: [のみしょく, いんじき, おんしょく] }
+    sentences:
+      - { text: "水を [飲]む。", reading: の, distractors: [いん, な, よ] }
+  - kanji: 運
+    readings: [{ on: うん }, { kun: はこ(ぶ) }]
+    words:
+      - { word: 運動, kana: うんどう, reading: うん, distractors: [うんとう, はこどう, うんどお] }
+    sentences:
+      - { text: "にもつを [運]ぶ。", reading: はこ, distractors: [うん, はご, ほこ] }
+  - kanji: 泳
+    readings: [{ on: えい }, { kun: およ(ぐ) }]
+    words:
+      - { word: 水泳, kana: すいえい, reading: えい, distractors: [みずえい, すいおよ, すいええ] }
+    sentences:
+      - { text: "プールで [泳]ぐ。", reading: およ, distractors: [えい, いそ, あお] }
+  - kanji: 駅
+    readings: [{ on: えき }]
+    words:
+      - { word: 駅長, kana: えきちょう, reading: えき, distractors: [えきなが, えっちょう, えきじょう] }
+  - kanji: 央
+    readings: [{ on: おう }]
+    words:
+      - { word: 中央, kana: ちゅうおう, reading: おう, distractors: [なかおう, ちゅうよう, ちゅおう] }
+  - kanji: 横
+    readings: [{ on: おう }, { kun: よこ }]
+    words:
+      - { word: "横{断|だん}", kana: おうだん, reading: おう, distractors: [よこだん, おうたん, こうだん] }
+    sentences:
+      - { text: "[横]に ならぶ。", reading: よこ, distractors: [おう, たて, よご] }
+  - kanji: 屋
+    readings: [{ on: おく }, { kun: や }]
+    words:
+      - { word: 屋上, kana: おくじょう, reading: おく, distractors: [やじょう, おくうえ, おっじょう] }
+      - { word: 本屋, kana: ほんや, reading: や, distractors: [ほんおく, もとや, ほんいえ] }
+  - kanji: 温
+    readings: [{ on: おん }, { kun: あたた(かい) }]
+    exclude: [あたた(か), あたた(まる), あたた(める)]
+    words:
+      - { word: 温度, kana: おんど, reading: おん, distractors: [あたたど, おんと, うんど] }
+    sentences:
+      - { text: "[温]かい スープを 飲む。", reading: あたた, distractors: [おん, あたら, あった] }
+  - kanji: 化
+    readings: [{ on: か }]
+    exclude: [け, ば(ける), ば(かす)]
+    words:
+      - { word: 文化, kana: ぶんか, reading: か, distractors: [もんか, ぶんけ, ぶんば] }
+  - kanji: 荷
+    readings: [{ kun: に }]
+    exclude: [か]
+    words:
+      - { word: 荷物, kana: にもつ, reading: に, distractors: [かもつ, にぶつ, にもの] }
+    sentences:
+      - { text: "車に [荷]を つむ。", reading: に, distractors: [か, ね, な] }
+  - kanji: 界
+    readings: [{ on: かい }]
+    words:
+      - { word: 世界, kana: せかい, reading: かい, distractors: [よかい, せいかい, せがい] }
+  - kanji: 開
+    readings: [{ on: かい }, { kun: ひら(く) }, { kun: あ(く) }]
+    exclude: [ひら(ける), あ(ける)]
+    words:
+      - { word: 開店, kana: かいてん, reading: かい, distractors: [ひらてん, かいでん, あきてん] }
+    sentences:
+      - { text: "本を [開]く。", reading: ひら, distractors: [かい, あ, ひろ] }
+  - kanji: 階
+    readings: [{ on: かい }]
+    words:
+      - { word: 二階, kana: にかい, reading: かい, distractors: [にがい, ふたかい, にけい] }
+  - kanji: 寒
+    readings: [{ on: かん }, { kun: さむ(い) }]
+    words:
+      - { word: 寒中, kana: かんちゅう, reading: かん, distractors: [さむちゅう, かんじゅう, がんちゅう] }
+    sentences:
+      - { text: "冬の 朝は [寒]い。", reading: さむ, distractors: [かん, さぶ, あつ] }
+  - kanji: 感
+    readings: [{ on: かん }]
+    words:
+      - { word: 感心, kana: かんしん, reading: かん, distractors: [かんじん, がんしん, かんこころ] }
+  - kanji: 漢
+    readings: [{ on: かん }]
+    words:
+      - { word: 漢字, kana: かんじ, reading: かん, distractors: [かんし, がんじ, かんもじ] }
+  - kanji: 館
+    readings: [{ on: かん }]
+    exclude: [やかた]
+    words:
+      - { word: 図書館, kana: としょかん, reading: かん, distractors: [ずしょかん, としょやかた, としょがん] }
+  - kanji: 岸
+    readings: [{ on: がん }, { kun: きし }]
+    words:
+      - { word: 海岸, kana: かいがん, reading: がん, distractors: [うみぎし, かいきし, かいかん] }
+    sentences:
+      - { text: "川の [岸]を 歩く。", reading: きし, distractors: [がん, ぎし, かし] }
+  - kanji: 起
+    readings: [{ on: き }, { kun: お(きる) }]
+    exclude: [お(こる), お(こす)]
+    words:
+      - { word: 起立, kana: きりつ, reading: き, distractors: [おきりつ, きりゅう, ぎりつ] }
+    sentences:
+      - { text: "朝 早く [起]きる。", reading: お, distractors: [き, おこ, あ] }
+  - kanji: 期
+    readings: [{ on: き }]
+    exclude: [ご]
+    words:
+      - { word: 学期, kana: がっき, reading: き, distractors: [がくき, がっご, がっぎ] }
+  - kanji: 客
+    readings: [{ on: きゃく }]
+    exclude: [かく]
+    words:
+      - { word: 客室, kana: きゃくしつ, reading: きゃく, distractors: [かくしつ, きゃくむろ, きゃっしつ] }
+  - kanji: 究
+    readings: [{ on: きゅう }]
+    exclude: [きわ(める)]
+    words:
+      - { word: 研究, kana: けんきゅう, reading: きゅう, distractors: [けんく, げんきゅう, けんきわ] }
+  - kanji: 急
+    readings: [{ on: きゅう }, { kun: いそ(ぐ) }]
+    words:
+      - { word: 急行, kana: きゅうこう, reading: きゅう, distractors: [いそこう, きゅうぎょう, きゅっこう] }
+    sentences:
+      - { text: "駅まで [急]ぐ。", reading: いそ, distractors: [きゅう, およ, いす] }
+  - kanji: 級
+    readings: [{ on: きゅう }]
+    words:
+      - { word: 学級, kana: がっきゅう, reading: きゅう, distractors: [がくきゅう, がっきょう, がきゅう] }
+  - kanji: 宮
+    readings: [{ on: きゅう }, { kun: みや }]
+    exclude: [ぐう, く]
+    words:
+      - { word: 宮中, kana: きゅうちゅう, reading: きゅう, distractors: [みやちゅう, ぐうちゅう, きゅうじゅう] }
+    sentences:
+      - { text: "お[宮]に おまいりする。", reading: みや, distractors: [きゅう, ぐう, みち] }
+  - kanji: 球
+    readings: [{ on: きゅう }]
+    exclude: [たま]
+    words:
+      - { word: 地球, kana: ちきゅう, reading: きゅう, distractors: [じきゅう, ちたま, ちきょう] }
+  - kanji: 去
+    readings: [{ on: きょ }, { on: こ }, { kun: さ(る) }]
+    words:
+      - { word: 去年, kana: きょねん, reading: きょ, distractors: [さるねん, こねん, きょとし] }
+      - { word: "{過|か}去", kana: かこ, reading: こ, distractors: [かきょ, かさ, かご] }
+    sentences:
+      - { text: "台風が [去]った。", reading: さ, distractors: [きょ, こ, い] }
+  - kanji: 橋
+    readings: [{ on: きょう }, { kun: はし }]
+    words:
+      - { word: 鉄橋, kana: てっきょう, reading: きょう, distractors: [てつきょう, てっぱし, てつはし] }
+    sentences:
+      - { text: "[橋]を わたる。", reading: はし, distractors: [きょう, ばし, はじ] }
+  - kanji: 業
+    readings: [{ on: ぎょう }]
+    exclude: [ごう, わざ]
+    words:
+      - { word: 工業, kana: こうぎょう, reading: ぎょう, distractors: [こうごう, くぎょう, こうきょう] }
+  - kanji: 曲
+    readings: [{ on: きょく }, { kun: ま(がる) }]
+    exclude: [ま(げる)]
+    words:
+      - { word: 作曲, kana: さっきょく, reading: きょく, distractors: [さくきょく, さっこく, さきょく] }
+    sentences:
+      - { text: "かどを 右に [曲]がる。", reading: ま, distractors: [きょく, ひ, まわ] }
+  - kanji: 局
+    readings: [{ on: きょく }]
+    words:
+      - { word: 薬局, kana: やっきょく, reading: きょく, distractors: [くすりきょく, やくきょく, やっこく] }
+  - kanji: 銀
+    readings: [{ on: ぎん }]
+    words:
+      - { word: 銀行, kana: ぎんこう, reading: ぎん, distractors: [ぎんぎょう, きんこう, ぎんいき] }
+  - kanji: 区
+    readings: [{ on: く }]
+    words:
+      - { word: 地区, kana: ちく, reading: く, distractors: [じく, ちぐ, ちきゅ] }
+  - kanji: 苦
+    readings: [{ on: く }, { kun: くる(しい) }, { kun: にが(い) }]
+    exclude: [くる(しむ), くる(しめる), にが(る)]
+    words:
+      - { word: 苦心, kana: くしん, reading: く, distractors: [くるしん, にがしん, くじん] }
+    sentences:
+      - { text: "この 薬は [苦]い。", reading: にが, distractors: [く, くる, にげ] }
+  - kanji: 具
+    readings: [{ on: ぐ }]
+    words:
+      - { word: 道具, kana: どうぐ, reading: ぐ, distractors: [みちぐ, どうく, とうぐ] }
+  - kanji: 君
+    readings: [{ on: くん }, { kun: きみ }]
+    words:
+      - { word: 主君, kana: しゅくん, reading: くん, distractors: [しゅきみ, ぬしくん, しゅぐん] }
+    sentences:
+      - { text: "[君]の 名前を 教えて。", reading: きみ, distractors: [くん, ぎみ, きむ] }
+  - kanji: 係
+    readings: [{ on: けい }, { kun: かかり }]
+    exclude: [かか(る)]
+    words:
+      - { word: "{関|かん}係", kana: かんけい, reading: けい, distractors: [かんかかり, かんげい, せきけい] }
+      - { word: 係員, kana: かかりいん, reading: かかり, distractors: [けいいん, かかいん, がかりいん] }
+    sentences:
+      - { text: "生き物 [係]に なった。", reading: かかり, distractors: [けい, かがり, かかい] }
+  - kanji: 軽
+    readings: [{ on: けい }, { kun: かる(い) }]
+    exclude: [かろ(やか)]
+    words:
+      - { word: 軽食, kana: けいしょく, reading: けい, distractors: [かるしょく, けいじき, けいしょっ] }
+    sentences:
+      - { text: "この かばんは [軽]い。", reading: かる, distractors: [けい, かろ, から] }
+  - kanji: 血
+    readings: [{ on: けつ }, { kun: ち }]
+    words:
+      - { word: 出血, kana: しゅっけつ, reading: けつ, distractors: [しゅつけつ, でち, しゅっち] }
+    sentences:
+      - { text: "ゆびから [血]が 出た。", reading: ち, distractors: [けつ, じ, ちい] }
+  - kanji: 決
+    readings: [{ on: けつ }, { kun: き(める) }]
+    exclude: [き(まる)]
+    words:
+      - { word: 決心, kana: けっしん, reading: けつ, distractors: [けつしん, きしん, けっこころ] }
+    sentences:
+      - { text: "はんちょうを [決]める。", reading: き, distractors: [けつ, さだ, け] }
+  - kanji: 研
+    readings: [{ on: けん }]
+    exclude: [と(ぐ)]
+    words:
+      - { word: 研究, kana: けんきゅう, reading: けん, distractors: [げんきゅう, とぎゅう, けんく] }
+  - kanji: 県
+    readings: [{ on: けん }]
+    words:
+      - { word: 県立, kana: けんりつ, reading: けん, distractors: [けんだち, げんりつ, けんりゅう] }
+  - kanji: 庫
+    readings: [{ on: こ }]
+    exclude: [く]
+    words:
+      - { word: 金庫, kana: きんこ, reading: こ, distractors: [かねこ, きんく, きんご] }
+  - kanji: 湖
+    readings: [{ on: こ }, { kun: みずうみ }]
+    words:
+      - { word: 湖水, kana: こすい, reading: こ, distractors: [みずうみすい, こみず, ごすい] }
+    sentences:
+      - { text: "[湖]で ボートに 乗る。", reading: みずうみ, distractors: [こ, みずうま, いけ] }
+  - kanji: 向
+    readings: [{ on: こう }, { kun: む(く) }]
+    exclude: [む(ける), む(かう), む(こう)]
+    words:
+      - { word: 方向, kana: ほうこう, reading: こう, distractors: [ほうむき, ほうごう, かたこう] }
+    sentences:
+      - { text: "うしろを [向]く。", reading: む, distractors: [こう, ふ, み] }
+  - kanji: 幸
+    readings: [{ on: こう }, { kun: さいわ(い) }, { kun: しあわ(せ) }]
+    exclude: [さち]
+    words:
+      - { word: 幸福, kana: こうふく, reading: こう, distractors: [さいわいふく, こうぶく, しあわふく] }
+    sentences:
+      - { text: "[幸]せな 気もちに なる。", reading: しあわ, distractors: [こう, さいわ, しわ] }
+  - kanji: 港
+    readings: [{ on: こう }, { kun: みなと }]
+    words:
+      - { word: 空港, kana: くうこう, reading: こう, distractors: [そらこう, くうみなと, くうごう] }
+    sentences:
+      - { text: "船が [港]に 入る。", reading: みなと, distractors: [こう, みさき, みなど] }
+  - kanji: 号
+    readings: [{ on: ごう }]
+    words:
+      - { word: 番号, kana: ばんごう, reading: ごう, distractors: [ばんこう, ばんご, ばっごう] }
+  - kanji: 根
+    readings: [{ on: こん }, { kun: ね }]
+    words:
+      - { word: 根気, kana: こんき, reading: こん, distractors: [ねき, こんけ, ごんき] }
+    sentences:
+      - { text: "木の [根]を ほる。", reading: ね, distractors: [こん, め, は] }
+  - kanji: 祭
+    readings: [{ on: さい }, { kun: まつ(り) }]
+    exclude: [まつ(る)]
+    words:
+      - { word: 祭日, kana: さいじつ, reading: さい, distractors: [まつりび, さいにち, さいひ] }
+    sentences:
+      - { text: "夏 [祭]りに 行く。", reading: まつ, distractors: [さい, まど, まち] }
+  - kanji: 皿
+    readings: [{ kun: さら }]
+    words:
+      - { word: 小皿, kana: こざら, reading: さら, distractors: [しょうさら, こさら, おさら] }
+    sentences:
+      - { text: "食べた あとに [皿]を あらう。", reading: さら, distractors: [ざら, さる, しら] }
+  - kanji: 仕
+    readings: [{ on: し }]
+    exclude: [じ, つか(える)]
+    words:
+      - { word: 仕事, kana: しごと, reading: し, distractors: [しこと, しじ, つかごと] }
+  - kanji: 死
+    readings: [{ on: し }, { kun: し(ぬ) }]
+    words:
+      - { word: 生死, kana: せいし, reading: し, distractors: [しょうし, せいじ, いきし] }
+  - kanji: 使
+    readings: [{ on: し }, { kun: つか(う) }]
+    words:
+      - { word: 使用, kana: しよう, reading: し, distractors: [つかよう, じよう, しやう] }
+    sentences:
+      - { text: "はさみを [使]う。", reading: つか, distractors: [し, つく, とか] }
+  - kanji: 始
+    readings: [{ on: し }, { kun: はじ(める) }]
+    exclude: [はじ(まる)]
+    words:
+      - { word: 開始, kana: かいし, reading: し, distractors: [かいはじ, ひらし, かいじ] }
+    sentences:
+      - { text: "しゅくだいを [始]める。", reading: はじ, distractors: [し, はし, はや] }
+  - kanji: 指
+    readings: [{ on: し }, { kun: ゆび }, { kun: さ(す) }]
+    words:
+      - { word: 指名, kana: しめい, reading: し, distractors: [ゆびめい, しみょう, さしめい] }
+    sentences:
+      - { text: "[指]で 地図を なぞる。", reading: ゆび, distractors: [し, ゆみ, さ] }
+  - kanji: 歯
+    readings: [{ on: し }, { kun: は }]
+    words:
+      - { word: "歯{科|か}", kana: しか, reading: し, distractors: [はか, しが, じか] }
+    sentences:
+      - { text: "ねる 前に [歯]を みがく。", reading: は, distractors: [し, ば, ほ] }
+  - kanji: 詩
+    readings: [{ on: し }]
+    words:
+      - { word: 詩人, kana: しじん, reading: し, distractors: [しにん, うたじん, ししん] }
+  - kanji: 次
+    readings: [{ on: じ }, { kun: つ(ぐ) }, { kun: つぎ }]
+    exclude: [し]
+    words:
+      - { word: 次回, kana: じかい, reading: じ, distractors: [つぎかい, しかい, じがい] }
+    sentences:
+      - { text: "[次]の 人 どうぞ。", reading: つぎ, distractors: [じ, し, つき] }
+  - kanji: 事
+    readings: [{ on: じ }, { kun: こと }]
+    exclude: [ず]
+    words:
+      - { word: 火事, kana: かじ, reading: じ, distractors: [ひごと, かこと, かし] }
+    sentences:
+      - { text: "大切な [事]を ノートに 書く。", reading: こと, distractors: [じ, ごと, もの] }
+  - kanji: 持
+    readings: [{ on: じ }, { kun: も(つ) }]
+    words:
+      - { word: 所持, kana: しょじ, reading: じ, distractors: [しょも, ところじ, しょち] }
+    sentences:
+      - { text: "かさを [持]つ。", reading: も, distractors: [じ, た, ま] }
+  - kanji: 式
+    readings: [{ on: しき }]
+    words:
+      - { word: 入学式, kana: にゅうがくしき, reading: しき, distractors: [にゅうがくじき, にゅうがっしき, いりがくしき] }
+  - kanji: 実
+    readings: [{ on: じつ }, { kun: み }, { kun: みの(る) }]
+    words:
+      - { word: 実力, kana: じつりょく, reading: じつ, distractors: [みりょく, じつりき, じっりょく] }
+    sentences:
+      - { text: "木の [実]を ひろう。", reading: み, distractors: [じつ, みの, め] }
+  - kanji: 写
+    readings: [{ on: しゃ }, { kun: うつ(す) }]
+    exclude: [うつ(る)]
+    words:
+      - { word: 写真, kana: しゃしん, reading: しゃ, distractors: [うつしん, しゃじん, しゃま] }
+    sentences:
+      - { text: "黒板の 字を ノートに [写]す。", reading: うつ, distractors: [しゃ, うち, おつ] }
+  - kanji: 者
+    readings: [{ on: しゃ }, { kun: もの }]
+    words:
+      - { word: 学者, kana: がくしゃ, reading: しゃ, distractors: [がくもの, がっしゃ, がくじゃ] }
+    sentences:
+      - { text: "その ことを 知らない [者]は いない。", reading: もの, distractors: [しゃ, じゃ, もん] }
+  - kanji: 主
+    readings: [{ on: しゅ }, { kun: おも }, { kun: ぬし }]
+    exclude: [す]
+    words:
+      - { word: 主人, kana: しゅじん, reading: しゅ, distractors: [ぬしじん, おもじん, しゅにん] }
+    sentences:
+      - { text: "[主]な 食べ物は 米です。", reading: おも, distractors: [しゅ, ぬし, あも] }
+  - kanji: 守
+    readings: [{ on: しゅ }, { kun: まも(る) }]
+    exclude: [す, も(り)]
+    words:
+      - { word: "守{備|び}", kana: しゅび, reading: しゅ, distractors: [すび, まもび, しゅうび] }
+    sentences:
+      - { text: "やくそくを [守]る。", reading: まも, distractors: [しゅ, まな, もも] }
+  - kanji: 取
+    readings: [{ on: しゅ }, { kun: と(る) }]
+    words:
+      - { word: "取{材|ざい}", kana: しゅざい, reading: しゅ, distractors: [とざい, しゅさい, とりざい] }
+    sentences:
+      - { text: "たなの 本を [取]る。", reading: と, distractors: [しゅ, つ, も] }
+  - kanji: 酒
+    readings: [{ on: しゅ }, { kun: さけ }]
+    exclude: [さか]
+    words:
+      - { word: 日本酒, kana: にほんしゅ, reading: しゅ, distractors: [にほんさけ, にほんざけ, にほんじゅ] }
+  - kanji: 受
+    readings: [{ on: じゅ }, { kun: う(ける) }]
+    exclude: [う(かる)]
+    words:
+      - { word: "受{信|しん}", kana: じゅしん, reading: じゅ, distractors: [うしん, じゅじん, しゅしん] }
+    sentences:
+      - { text: "テストを [受]ける。", reading: う, distractors: [じゅ, か, つ] }
+  - kanji: 州
+    readings: [{ on: しゅう }]
+    exclude: [す]
+    words:
+      - { word: 本州, kana: ほんしゅう, reading: しゅう, distractors: [ほんす, もとしゅう, ほんじゅう] }
+  - kanji: 拾
+    readings: [{ on: しゅう }, { kun: ひろ(う) }]
+    exclude: [じゅう]
+    words:
+      - { word: "拾{得|とく}", kana: しゅうとく, reading: しゅう, distractors: [ひろとく, じゅうとく, しゅとく] }
+    sentences:
+      - { text: "ごみを [拾]う。", reading: ひろ, distractors: [しゅう, すく, ひら] }
+  - kanji: 終
+    readings: [{ on: しゅう }, { kun: お(わる) }]
+    exclude: [お(える)]
+    words:
+      - { word: 終点, kana: しゅうてん, reading: しゅう, distractors: [おてん, しゅうでん, しゅてん] }
+    sentences:
+      - { text: "じゅぎょうが [終]わる。", reading: お, distractors: [しゅう, おお, か] }
+  - kanji: 習
+    readings: [{ on: しゅう }, { kun: なら(う) }]
+    words:
+      - { word: 学習, kana: がくしゅう, reading: しゅう, distractors: [がっしゅう, がくなら, がくしょう] }
+    sentences:
+      - { text: "ピアノを [習]う。", reading: なら, distractors: [しゅう, ねら, まな] }
+  - kanji: 集
+    readings: [{ on: しゅう }, { kun: あつ(まる) }]
+    exclude: [あつ(める), つど(う)]
+    words:
+      - { word: 集合, kana: しゅうごう, reading: しゅう, distractors: [あつごう, しゅうこう, しゅごう] }
+    sentences:
+      - { text: "公園に [集]まる。", reading: あつ, distractors: [しゅう, つど, あた] }
+  - kanji: 住
+    readings: [{ on: じゅう }, { kun: す(む) }]
+    exclude: [す(まう)]
+    words:
+      - { word: 住所, kana: じゅうしょ, reading: じゅう, distractors: [すみしょ, じゅうところ, しゅうしょ] }
+    sentences:
+      - { text: "海の 近くの 町に [住]む。", reading: す, distractors: [じゅう, つ, や] }
+  - kanji: 重
+    readings: [{ on: じゅう }, { on: ちょう }, { kun: おも(い) }, { kun: かさ(ねる) }]
+    exclude: [え, かさ(なる)]
+    words:
+      - { word: 体重, kana: たいじゅう, reading: じゅう, distractors: [たいちょう, たいおも, からだじゅう] }
+      - { word: "{貴|き}重", kana: きちょう, reading: ちょう, distractors: [きじゅう, きおも, ぎちょう] }
+    sentences:
+      - { text: "この 石は [重]い。", reading: おも, distractors: [じゅう, かさ, おな] }
+  - kanji: 宿
+    readings: [{ on: しゅく }, { kun: やど }]
+    exclude: [やど(る), やど(す)]
+    words:
+      - { word: 宿題, kana: しゅくだい, reading: しゅく, distractors: [やどだい, しゅくたい, しゅっだい] }
+    sentences:
+      - { text: "山の [宿]に とまる。", reading: やど, distractors: [しゅく, やね, やと] }
+  - kanji: 所
+    readings: [{ on: しょ }, { kun: ところ }]
+    words:
+      - { word: 場所, kana: ばしょ, reading: しょ, distractors: [ばところ, じょうしょ, ばじょ] }
+    sentences:
+      - { text: "しずかな [所]で 本を 読む。", reading: ところ, distractors: [しょ, どころ, とこ] }
+  - kanji: 暑
+    readings: [{ on: しょ }, { kun: あつ(い) }]
+    words:
+      - { word: 暑中, kana: しょちゅう, reading: しょ, distractors: [あつちゅう, しょじゅう, しょなか] }
+    sentences:
+      - { text: "今日は とても [暑]い。", reading: あつ, distractors: [しょ, さむ, あち] }
+  - kanji: 助
+    readings: [{ on: じょ }, { kun: たす(ける) }]
+    exclude: [たす(かる), すけ]
+    words:
+      - { word: 助手, kana: じょしゅ, reading: じょ, distractors: [たすしゅ, じょて, しょしゅ] }
+    sentences:
+      - { text: "こまって いる 人を [助]ける。", reading: たす, distractors: [じょ, すけ, たま] }
+  - kanji: 昭
+    readings: [{ on: しょう }]
+    words:
+      - { word: 昭和, kana: しょうわ, reading: しょう, distractors: [しょうな, じょうわ, しょわ] }
+  - kanji: 消
+    readings: [{ on: しょう }, { kun: き(える) }, { kun: け(す) }]
+    words:
+      - { word: 消火, kana: しょうか, reading: しょう, distractors: [けしか, しょうび, きえか] }
+    sentences:
+      - { text: "教室の 電気を [消]す。", reading: け, distractors: [しょう, き, か] }
+  - kanji: 商
+    readings: [{ on: しょう }]
+    exclude: [あきな(う)]
+    words:
+      - { word: 商店, kana: しょうてん, reading: しょう, distractors: [しょうみせ, じょうてん, あきてん] }
+  - kanji: 章
+    readings: [{ on: しょう }]
+    words:
+      - { word: 文章, kana: ぶんしょう, reading: しょう, distractors: [もんしょう, ぶんじょう, ぶんしょ] }
+  - kanji: 勝
+    readings: [{ on: しょう }, { kun: か(つ) }]
+    exclude: [まさ(る)]
+    words:
+      - { word: 勝負, kana: しょうぶ, reading: しょう, distractors: [かちぶ, しょうふ, しょうまけ] }
+    sentences:
+      - { text: "しあいに [勝]つ。", reading: か, distractors: [しょう, ま, う] }
+  - kanji: 乗
+    readings: [{ on: じょう }, { kun: の(る) }]
+    exclude: [の(せる)]
+    words:
+      - { word: 乗車, kana: じょうしゃ, reading: じょう, distractors: [のりしゃ, じょうくるま, しょうしゃ] }
+    sentences:
+      - { text: "バスに [乗]る。", reading: の, distractors: [じょう, お, と] }
+  - kanji: 植
+    readings: [{ on: しょく }, { kun: う(える) }]
+    exclude: [う(わる)]
+    words:
+      - { word: 植物, kana: しょくぶつ, reading: しょく, distractors: [うぶつ, しょくもつ, しょっぶつ] }
+    sentences:
+      - { text: "花の なえを [植]える。", reading: う, distractors: [しょく, そ, か] }
+  - kanji: 申
+    readings: [{ on: しん }, { kun: もう(す) }]
+    words:
+      - { word: "申{告|こく}", kana: しんこく, reading: しん, distractors: [もうこく, じんこく, しんごく] }
+    sentences:
+      - { text: "わたしは 山田と [申]します。", reading: もう, distractors: [しん, ま, さる] }
+  - kanji: 身
+    readings: [{ on: しん }, { kun: み }]
+    words:
+      - { word: 身長, kana: しんちょう, reading: しん, distractors: [みちょう, しんなが, じんちょう] }
+    sentences:
+      - { text: "[身]の 回りを かたづける。", reading: み, distractors: [しん, じん, め] }
+  - kanji: 神
+    readings: [{ on: しん }, { on: じん }, { kun: かみ }]
+    exclude: [かん, こう]
+    words:
+      - { word: 神話, kana: しんわ, reading: しん, distractors: [じんわ, かみわ, しんはなし] }
+      - { word: 神社, kana: じんじゃ, reading: じん, distractors: [しんしゃ, かみやしろ, じんしゃ] }
+    sentences:
+      - { text: "[神]さまに おねがいする。", reading: かみ, distractors: [しん, じん, かん] }
+  - kanji: 真
+    readings: [{ on: しん }, { kun: ま }]
+    words:
+      - { word: 写真, kana: しゃしん, reading: しん, distractors: [しゃま, しゃじん, うつしん] }
+      - { word: 真上, kana: まうえ, reading: ま, distractors: [しんうえ, まじょう, しんじょう] }
+  - kanji: 深
+    readings: [{ on: しん }, { kun: ふか(い) }]
+    exclude: [ふか(まる), ふか(める)]
+    words:
+      - { word: 深海, kana: しんかい, reading: しん, distractors: [ふかうみ, しんがい, ふかかい] }
+    sentences:
+      - { text: "この 川は [深]い。", reading: ふか, distractors: [しん, ふけ, あさ] }
+  - kanji: 進
+    readings: [{ on: しん }, { kun: すす(む) }]
+    exclude: [すす(める)]
+    words:
+      - { word: 前進, kana: ぜんしん, reading: しん, distractors: [まえしん, ぜんすす, ぜんじん] }
+    sentences:
+      - { text: "前へ [進]む。", reading: すす, distractors: [しん, すず, はさ] }
+  - kanji: 世
+    readings: [{ on: せ }, { on: せい }, { kun: よ }]
+    words:
+      - { word: 世話, kana: せわ, reading: せ, distractors: [せいわ, よわ, せばなし] }
+      - { word: "世{紀|き}", kana: せいき, reading: せい, distractors: [せき, よき, せいぎ] }
+    sentences:
+      - { text: "[世]の 中には ふしぎな ことが ある。", reading: よ, distractors: [せ, せい, ぜ] }
+  - kanji: 整
+    readings: [{ on: せい }, { kun: ととの(える) }]
+    exclude: [ととの(う)]
+    words:
+      - { word: 整理, kana: せいり, reading: せい, distractors: [ととのり, せいい, ぜいり] }
+    sentences:
+      - { text: "つくえの 上を [整]える。", reading: ととの, distractors: [せい, そろ, とと] }
+  - kanji: 昔
+    readings: [{ kun: むかし }]
+    exclude: [せき, しゃく]
+    words:
+      - { word: 昔話, kana: むかしばなし, reading: むかし, distractors: [むかしはなし, せきわ, むかしわ] }
+    sentences:
+      - { text: "[昔]の 町の ようすを 聞く。", reading: むかし, distractors: [せき, しゃく, むかい] }
+  - kanji: 全
+    readings: [{ on: ぜん }, { kun: まった(く) }]
+    exclude: [すべ(て)]
+    words:
+      - { word: 全部, kana: ぜんぶ, reading: ぜん, distractors: [まったぶ, ぜんぷ, せんぶ] }
+    sentences:
+      - { text: "[全]く 知らなかった。", reading: まった, distractors: [ぜん, すべ, まる] }
+  - kanji: 相
+    readings: [{ on: そう }, { kun: あい }]
+    exclude: [しょう]
+    words:
+      - { word: 相談, kana: そうだん, reading: そう, distractors: [あいだん, しょうだん, そうたん] }
+    sentences:
+      - { text: "[相]手の 話を よく 聞く。", reading: あい, distractors: [そう, しょう, あう] }
+  - kanji: 送
+    readings: [{ on: そう }, { kun: おく(る) }]
+    words:
+      - { word: 放送, kana: ほうそう, reading: そう, distractors: [ほうおく, ほうぞう, はなそう] }
+    sentences:
+      - { text: "友だちに 手紙を [送]る。", reading: おく, distractors: [そう, おこ, かえ] }
+  - kanji: 想
+    readings: [{ on: そう }]
+    exclude: [そ]
+    words:
+      - { word: 感想, kana: かんそう, reading: そう, distractors: [かんぞう, かんそ, がんそう] }
+  - kanji: 息
+    readings: [{ on: そく }, { kun: いき }]
+    words:
+      - { word: 休息, kana: きゅうそく, reading: そく, distractors: [やすみいき, きゅういき, きゅうぞく] }
+    sentences:
+      - { text: "大きく [息]を すう。", reading: いき, distractors: [そく, いけ, ゆき] }
+  - kanji: 速
+    readings: [{ on: そく }, { kun: はや(い) }]
+    exclude: [はや(める), はや(まる), すみ(やか)]
+    words:
+      - { word: 速度, kana: そくど, reading: そく, distractors: [はやど, そくと, ぞくど] }
+    sentences:
+      - { text: "あの 電車は とても [速]い。", reading: はや, distractors: [そく, はえ, おそ] }
+  - kanji: 族
+    readings: [{ on: ぞく }]
+    words:
+      - { word: 家族, kana: かぞく, reading: ぞく, distractors: [いえぞく, かそく, けぞく] }
+  - kanji: 他
+    readings: [{ on: た }]
+    exclude: [ほか]
+    words:
+      - { word: 他人, kana: たにん, reading: た, distractors: [ほかにん, たじん, だにん] }
+  - kanji: 打
+    readings: [{ on: だ }, { kun: う(つ) }]
+    words:
+      - { word: 打者, kana: だしゃ, reading: だ, distractors: [うしゃ, たしゃ, だもの] }
+    sentences:
+      - { text: "バットで ボールを [打]つ。", reading: う, distractors: [だ, た, も] }
+  - kanji: 対
+    readings: [{ on: たい }]
+    exclude: [つい]
+    words:
+      - { word: 反対, kana: はんたい, reading: たい, distractors: [はんつい, はんだい, そりたい] }
+  - kanji: 待
+    readings: [{ on: たい }, { kun: ま(つ) }]
+    words:
+      - { word: 期待, kana: きたい, reading: たい, distractors: [きま, きだい, ごたい] }
+    sentences:
+      - { text: "バスを [待]つ。", reading: ま, distractors: [たい, う, も] }
+  - kanji: 代
+    readings: [{ on: だい }, { on: たい }, { kun: か(わる) }]
+    exclude: [か(える), よ, しろ]
+    words:
+      - { word: 時代, kana: じだい, reading: だい, distractors: [じたい, ときだい, じかわ] }
+      - { word: 交代, kana: こうたい, reading: たい, distractors: [こうだい, まじたい, こうかわ] }
+    sentences:
+      - { text: "先生に [代]わって 話す。", reading: か, distractors: [だい, たい, かえ] }
+  - kanji: 第
+    readings: [{ on: だい }]
+    words:
+      - { word: 第一, kana: だいいち, reading: だい, distractors: [たいいち, だいひと, だいいつ] }
+  - kanji: 題
+    readings: [{ on: だい }]
+    words:
+      - { word: 話題, kana: わだい, reading: だい, distractors: [わたい, はなしだい, わでい] }
+  - kanji: 炭
+    readings: [{ on: たん }, { kun: すみ }]
+    words:
+      - { word: 木炭, kana: もくたん, reading: たん, distractors: [きずみ, もくずみ, ぼくたん] }
+    sentences:
+      - { text: "[炭]火で 魚を やく。", reading: すみ, distractors: [たん, ずみ, すな] }
+  - kanji: 短
+    readings: [{ on: たん }, { kun: みじか(い) }]
+    words:
+      - { word: 短気, kana: たんき, reading: たん, distractors: [みじかき, たんけ, だんき] }
+    sentences:
+      - { text: "えんぴつが [短]く なった。", reading: みじか, distractors: [たん, みじ, ちか] }
+  - kanji: 談
+    readings: [{ on: だん }]
+    words:
+      - { word: 会談, kana: かいだん, reading: だん, distractors: [かいたん, あいだん, かいでん] }
+  - kanji: 着
+    readings: [{ on: ちゃく }, { kun: き(る) }, { kun: つ(く) }]
+    exclude: [じゃく, き(せる), つ(ける)]
+    words:
+      - { word: 着地, kana: ちゃくち, reading: ちゃく, distractors: [きち, ちゃくじ, つきち] }
+    sentences:
+      - { text: "あたたかい コートを [着]る。", reading: き, distractors: [ちゃく, つ, か] }
+  - kanji: 注
+    readings: [{ on: ちゅう }]
+    exclude: [そそ(ぐ)]
+    words:
+      - { word: 注意, kana: ちゅうい, reading: ちゅう, distractors: [ちゅうえ, そそい, じゅうい] }
+  - kanji: 柱
+    readings: [{ on: ちゅう }, { kun: はしら }]
+    words:
+      - { word: 電柱, kana: でんちゅう, reading: ちゅう, distractors: [でんばしら, でんはしら, てんちゅう] }
+    sentences:
+      - { text: "[柱]で せの 高さを くらべる。", reading: はしら, distractors: [ちゅう, ばしら, はしご] }
+  - kanji: 丁
+    readings: [{ on: ちょう }]
+    exclude: [てい]
+    words:
+      - { word: 丁目, kana: ちょうめ, reading: ちょう, distractors: [ちょうもく, ていめ, ちょめ] }
+  - kanji: 帳
+    readings: [{ on: ちょう }]
+    words:
+      - { word: 手帳, kana: てちょう, reading: ちょう, distractors: [しゅちょう, てじょう, てちょ] }
+  - kanji: 調
+    readings: [{ on: ちょう }, { kun: しら(べる) }]
+    exclude: [ととの(う), ととの(える)]
+    words:
+      - { word: 調理, kana: ちょうり, reading: ちょう, distractors: [しらり, じょうり, ちょうい] }
+    sentences:
+      - { text: "図かんで 名前を [調]べる。", reading: しら, distractors: [ちょう, ととの, しる] }
+  - kanji: 追
+    readings: [{ on: つい }, { kun: お(う) }]
+    words:
+      - { word: "追{加|か}", kana: ついか, reading: つい, distractors: [おいか, つうか, ついが] }
+    sentences:
+      - { text: "にげた ボールを [追]う。", reading: お, distractors: [つい, か, おお] }
+  - kanji: 定
+    readings: [{ on: てい }]
+    exclude: [じょう, さだ(める), さだ(まる), さだ(か)]
+    words:
+      - { word: 定食, kana: ていしょく, reading: てい, distractors: [じょうしょく, ていじき, さだしょく] }
+  - kanji: 庭
+    readings: [{ on: てい }, { kun: にわ }]
+    words:
+      - { word: 校庭, kana: こうてい, reading: てい, distractors: [こうにわ, こうでい, がっこうてい] }
+    sentences:
+      - { text: "[庭]に 木を 植える。", reading: にわ, distractors: [てい, には, にや] }
+  - kanji: 笛
+    readings: [{ on: てき }, { kun: ふえ }]
+    words:
+      - { word: 汽笛, kana: きてき, reading: てき, distractors: [きぶえ, きふえ, きでき] }
+    sentences:
+      - { text: "音楽の 時間に [笛]を ふく。", reading: ふえ, distractors: [てき, ぶえ, ふね] }
+  - kanji: 鉄
+    readings: [{ on: てつ }]
+    words:
+      - { word: 鉄道, kana: てつどう, reading: てつ, distractors: [てっどう, てつみち, てつとう] }
+  - kanji: 転
+    readings: [{ on: てん }, { kun: ころ(ぶ) }]
+    exclude: [ころ(がる), ころ(げる), ころ(がす)]
+    words:
+      - { word: 回転, kana: かいてん, reading: てん, distractors: [まわてん, かいでん, かいころ] }
+    sentences:
+      - { text: "石に つまずいて [転]ぶ。", reading: ころ, distractors: [てん, まろ, こお] }
+  - kanji: 都
+    readings: [{ on: と }, { on: つ }]
+    exclude: [みやこ]
+    words:
+      - { word: 都会, kana: とかい, reading: と, distractors: [つかい, みやこかい, とがい] }
+      - { word: 都合, kana: つごう, reading: つ, distractors: [とごう, つあい, みやこう] }
+  - kanji: 度
+    readings: [{ on: ど }]
+    exclude: [と, たく, たび]
+    words:
+      - { word: 今度, kana: こんど, reading: ど, distractors: [いまど, こんと, こんたび] }
+  - kanji: 投
+    readings: [{ on: とう }, { kun: な(げる) }]
+    words:
+      - { word: 投手, kana: とうしゅ, reading: とう, distractors: [なげしゅ, とうて, どうしゅ] }
+    sentences:
+      - { text: "ボールを 遠くへ [投]げる。", reading: な, distractors: [とう, に, ま] }
+  - kanji: 豆
+    readings: [{ on: とう }, { on: ず }, { kun: まめ }]
+    words:
+      - { word: 大豆, kana: だいず, reading: ず, distractors: [おおまめ, だいとう, たいず] }
+      - { word: "{納|なっ}豆", kana: なっとう, reading: とう, distractors: [なっず, なっまめ, のうとう] }
+    sentences:
+      - { text: "せつ分に [豆]まきを する。", reading: まめ, distractors: [とう, ず, まま] }
+  - kanji: 島
+    readings: [{ on: とう }, { kun: しま }]
+    words:
+      - { word: 半島, kana: はんとう, reading: とう, distractors: [はんしま, はんどう, なかとう] }
+    sentences:
+      - { text: "海の 向こうに [島]が 見える。", reading: しま, distractors: [とう, じま, やま] }
+  - kanji: 湯
+    readings: [{ on: とう }, { kun: ゆ }]
+    words:
+      - { word: "{熱|ねっ}湯", kana: ねっとう, reading: とう, distractors: [ねっゆ, ねつゆ, ねっどう] }
+    sentences:
+      - { text: "おふろの お[湯]が あつい。", reading: ゆ, distractors: [とう, ゆう, み] }
+  - kanji: 登
+    readings: [{ on: とう }, { on: と }, { kun: のぼ(る) }]
+    words:
+      - { word: 登校, kana: とうこう, reading: とう, distractors: [とこう, のぼりこう, どうこう] }
+      - { word: 登山, kana: とざん, reading: と, distractors: [とうざん, のぼやま, とさん] }
+    sentences:
+      - { text: "家族で 山に [登]る。", reading: のぼ, distractors: [とう, と, あが] }
+  - kanji: 等
+    readings: [{ on: とう }, { kun: ひと(しい) }]
+    words:
+      - { word: 平等, kana: びょうどう, reading: とう, distractors: [へいとう, びょうとう, ひらどう] }
+    sentences:
+      - { text: "二本の ひもの 長さが [等]しい。", reading: ひと, distractors: [とう, ひど, ただ] }
+  - kanji: 動
+    readings: [{ on: どう }, { kun: うご(く) }]
+    exclude: [うご(かす)]
+    words:
+      - { word: 動物, kana: どうぶつ, reading: どう, distractors: [うごぶつ, どうもつ, とうぶつ] }
+    sentences:
+      - { text: "エレベーターが [動]く。", reading: うご, distractors: [どう, ゆご, うつ] }
+  - kanji: 童
+    readings: [{ on: どう }]
+    exclude: [わらべ]
+    words:
+      - { word: 童話, kana: どうわ, reading: どう, distractors: [わらべわ, とうわ, どうはなし] }
+  - kanji: 農
+    readings: [{ on: のう }]
+    words:
+      - { word: 農家, kana: のうか, reading: のう, distractors: [のうけ, のうや, のか] }
+  - kanji: 波
+    readings: [{ on: は }, { kun: なみ }]
+    words:
+      - { word: 電波, kana: でんぱ, reading: は, distractors: [でんは, でんなみ, てんぱ] }
+    sentences:
+      - { text: "今日は 海の [波]が 高い。", reading: なみ, distractors: [は, ば, なわ] }
+  - kanji: 配
+    readings: [{ on: はい }, { kun: くば(る) }]
+    words:
+      - { word: 心配, kana: しんぱい, reading: はい, distractors: [しんはい, こころはい, しんくば] }
+    sentences:
+      - { text: "みんなに プリントを [配]る。", reading: くば, distractors: [はい, くる, くま] }
+  - kanji: 倍
+    readings: [{ on: ばい }]
+    words:
+      - { word: 二倍, kana: にばい, reading: ばい, distractors: [にはい, ふたばい, にべい] }
+  - kanji: 箱
+    readings: [{ kun: はこ }]
+    words:
+      - { word: 木箱, kana: きばこ, reading: はこ, distractors: [きはこ, もくはこ, もくばこ] }
+    sentences:
+      - { text: "[箱]に おもちゃを しまう。", reading: はこ, distractors: [ばこ, ほこ, はな] }
+  - kanji: 畑
+    readings: [{ kun: はたけ }]
+    exclude: [はた]
+    words:
+      - { word: 麦畑, kana: むぎばたけ, reading: はたけ, distractors: [むぎはたけ, むぎはた, ばくばたけ] }
+    sentences:
+      - { text: "[畑]で 大根を 育てる。", reading: はたけ, distractors: [はた, はたき, はかた] }
+  - kanji: 発
+    readings: [{ on: はつ }]
+    exclude: [ほつ]
+    words:
+      - { word: 出発, kana: しゅっぱつ, reading: はつ, distractors: [しゅつはつ, でぱつ, しゅっはつ] }
+      - { word: 発見, kana: はっけん, reading: はつ, distractors: [はつけん, ほっけん, はっみ] }
+  - kanji: 反
+    readings: [{ on: はん }]
+    exclude: [ほん, たん, そ(る), そ(らす)]
+    words:
+      - { word: 反対, kana: はんたい, reading: はん, distractors: [はんだい, そりたい, ほんたい] }
+  - kanji: 坂
+    readings: [{ kun: さか }]
+    exclude: [はん]
+    words:
+      - { word: 坂道, kana: さかみち, reading: さか, distractors: [はんどう, さかどう, ざかみち] }
+    sentences:
+      - { text: "自てん車で [坂]を 上る。", reading: さか, distractors: [はん, ざか, さく] }
+  - kanji: 板
+    readings: [{ on: ばん }, { kun: いた }]
+    exclude: [はん]
+    words:
+      - { word: 黒板, kana: こくばん, reading: ばん, distractors: [くろいた, こくいた, こくはん] }
+    sentences:
+      - { text: "[板]に くぎを うつ。", reading: いた, distractors: [ばん, はん, いだ] }
+  - kanji: 皮
+    readings: [{ on: ひ }, { kun: かわ }]
+    words:
+      - { word: "皮{膚|ふ}", kana: ひふ, reading: ひ, distractors: [かわふ, ひぶ, びふ] }
+    sentences:
+      - { text: "りんごの [皮]を むく。", reading: かわ, distractors: [ひ, がわ, かま] }
+  - kanji: 悲
+    readings: [{ on: ひ }, { kun: かな(しい) }]
+    exclude: [かな(しむ)]
+    words:
+      - { word: 悲鳴, kana: ひめい, reading: ひ, distractors: [かなめい, ひなき, びめい] }
+    sentences:
+      - { text: "[悲]しい お話を 読む。", reading: かな, distractors: [ひ, かね, さび] }
+  - kanji: 美
+    readings: [{ on: び }, { kun: うつく(しい) }]
+    words:
+      - { word: 美人, kana: びじん, reading: び, distractors: [うつくじん, びにん, みじん] }
+    sentences:
+      - { text: "山の けしきが [美]しい。", reading: うつく, distractors: [び, み, うつ] }
+  - kanji: 鼻
+    readings: [{ kun: はな }]
+    exclude: [び]
+    words:
+      - { word: 鼻水, kana: はなみず, reading: はな, distractors: [はなすい, びすい, はなみつ] }
+    sentences:
+      - { text: "かぜで [鼻]が つまる。", reading: はな, distractors: [び, ばな, はね] }
+  - kanji: 筆
+    readings: [{ on: ひつ }, { kun: ふで }]
+    words:
+      - { word: "{鉛|えん}筆", kana: えんぴつ, reading: ひつ, distractors: [えんひつ, えんふで, えんぷで] }
+    sentences:
+      - { text: "[筆]で 字を 書く。", reading: ふで, distractors: [ひつ, ぴつ, ふみ] }
+  - kanji: 氷
+    readings: [{ on: ひょう }, { kun: こおり }]
+    exclude: [ひ]
+    words:
+      - { word: 氷山, kana: ひょうざん, reading: ひょう, distractors: [こおりやま, ひょうさん, こおりざん] }
+    sentences:
+      - { text: "コップの [氷]が とける。", reading: こおり, distractors: [ひょう, ひ, こおろ] }
+  - kanji: 表
+    readings: [{ on: ひょう }, { kun: おもて }, { kun: あらわ(す) }]
+    exclude: [あらわ(れる)]
+    words:
+      - { word: 発表, kana: はっぴょう, reading: ひょう, distractors: [はつひょう, はっおもて, はっひょう] }
+    sentences:
+      - { text: "紙の [表]と うらを たしかめる。", reading: おもて, distractors: [ひょう, あらわ, おもで] }
+  - kanji: 秒
+    readings: [{ on: びょう }]
+    words:
+      - { word: 一秒, kana: いちびょう, reading: びょう, distractors: [いっぴょう, ひとびょう, いちひょう] }
+  - kanji: 病
+    readings: [{ on: びょう }]
+    exclude: [へい, や(む), やまい]
+    words:
+      - { word: 病気, kana: びょうき, reading: びょう, distractors: [やまいき, へいき, びょうけ] }
+  - kanji: 品
+    readings: [{ on: ひん }, { kun: しな }]
+    words:
+      - { word: 作品, kana: さくひん, reading: ひん, distractors: [さくしな, さっぴん, さくびん] }
+    sentences:
+      - { text: "店に [品]物が ならぶ。", reading: しな, distractors: [ひん, しも, ひな] }
+  - kanji: 負
+    readings: [{ on: ふ }, { kun: ま(ける) }, { kun: お(う) }]
+    exclude: [ま(かす)]
+    words:
+      - { word: "負{担|たん}", kana: ふたん, reading: ふ, distractors: [まけたん, ぶたん, ふだん] }
+    sentences:
+      - { text: "おしくも しあいに [負]ける。", reading: ま, distractors: [ふ, お, か] }
+  - kanji: 部
+    readings: [{ on: ぶ }]
+    words:
+      - { word: 部分, kana: ぶぶん, reading: ぶ, distractors: [ぶふん, べぶん, ぶわけ] }
+  - kanji: 服
+    readings: [{ on: ふく }]
+    words:
+      - { word: 洋服, kana: ようふく, reading: ふく, distractors: [ようぶく, ようふっ, よふく] }
+  - kanji: 福
+    readings: [{ on: ふく }]
+    words:
+      - { word: 福引, kana: ふくびき, reading: ふく, distractors: [ふくひき, ふっびき, ぶくびき] }
+  - kanji: 物
+    readings: [{ on: ぶつ }, { on: もつ }, { kun: もの }]
+    words:
+      - { word: 人物, kana: じんぶつ, reading: ぶつ, distractors: [にんぶつ, じんもつ, ひともの] }
+      - { word: 荷物, kana: にもつ, reading: もつ, distractors: [にぶつ, にもの, かもつ] }
+    sentences:
+      - { text: "[物]を 大切に する。", reading: もの, distractors: [ぶつ, もつ, もん] }
+  - kanji: 平
+    readings: [{ on: へい }, { on: びょう }, { kun: たい(ら) }, { kun: ひら }]
+    words:
+      - { word: 平和, kana: へいわ, reading: へい, distractors: [ひらわ, びょうわ, へいお] }
+      - { word: 平等, kana: びょうどう, reading: びょう, distractors: [へいどう, ひらとう, びょうとう] }
+    sentences:
+      - { text: "[平]らな 道を 歩く。", reading: たい, distractors: [へい, ひら, たか] }
+  - kanji: 返
+    readings: [{ on: へん }, { kun: かえ(す) }]
+    exclude: [かえ(る)]
+    words:
+      - { word: 返事, kana: へんじ, reading: へん, distractors: [かえじ, へんこと, べんじ] }
+    sentences:
+      - { text: "図書館に 本を [返]す。", reading: かえ, distractors: [へん, かわ, かい] }
+  - kanji: 勉
+    readings: [{ on: べん }]
+    words:
+      - { word: 勉強, kana: べんきょう, reading: べん, distractors: [べんごう, めんきょう, べんぎょう] }
+  - kanji: 放
+    readings: [{ on: ほう }, { kun: はな(す) }]
+    exclude: [はな(つ), はな(れる)]
+    words:
+      - { word: 開放, kana: かいほう, reading: ほう, distractors: [かいはな, ひらほう, かいぼう] }
+    sentences:
+      - { text: "つかまえた 虫を [放]す。", reading: はな, distractors: [ほう, はず, かえ] }
+  - kanji: 味
+    readings: [{ on: み }, { kun: あじ }]
+    exclude: [あじ(わう)]
+    words:
+      - { word: 意味, kana: いみ, reading: み, distractors: [いあじ, いび, えみ] }
+    sentences:
+      - { text: "スープの [味]を みる。", reading: あじ, distractors: [み, あし, うま] }
+  - kanji: 命
+    readings: [{ on: めい }, { kun: いのち }]
+    exclude: [みょう]
+    words:
+      - { word: 生命, kana: せいめい, reading: めい, distractors: [せいみょう, いのちめい, しょうめい] }
+    sentences:
+      - { text: "生き物の [命]を 大切に する。", reading: いのち, distractors: [めい, みょう, いのし] }
+  - kanji: 面
+    readings: [{ on: めん }]
+    exclude: [おも, おもて, つら]
+    words:
+      - { word: 地面, kana: じめん, reading: めん, distractors: [ちめん, じつら, じおも] }
+  - kanji: 問
+    readings: [{ on: もん }]
+    exclude: [と(う), と(い), とん]
+    words:
+      - { word: 問題, kana: もんだい, reading: もん, distractors: [もんたい, といだい, とんだい] }
+  - kanji: 役
+    readings: [{ on: やく }]
+    exclude: [えき]
+    words:
+      - { word: 主役, kana: しゅやく, reading: やく, distractors: [しゅえき, おもやく, しゅうやく] }
+  - kanji: 薬
+    readings: [{ on: やく }, { kun: くすり }]
+    words:
+      - { word: 農薬, kana: のうやく, reading: やく, distractors: [のうくすり, のうぐすり, のやく] }
+    sentences:
+      - { text: "ごはんの あとに [薬]を 飲む。", reading: くすり, distractors: [やく, くさり, ぐすり] }
+  - kanji: 由
+    readings: [{ on: ゆう }]
+    exclude: [ゆ, ゆい, よし]
+    words:
+      - { word: 自由, kana: じゆう, reading: ゆう, distractors: [じゆ, じよう, しゆう] }
+      - { word: 理由, kana: りゆう, reading: ゆう, distractors: [りよし, りゆ, りよう] }
+  - kanji: 油
+    readings: [{ on: ゆ }, { kun: あぶら }]
+    words:
+      - { word: 石油, kana: せきゆ, reading: ゆ, distractors: [いしゆ, せきあぶら, しゃくゆ] }
+    sentences:
+      - { text: "フライパンに [油]を ひく。", reading: あぶら, distractors: [ゆ, あぶ, ゆう] }
+  - kanji: 有
+    readings: [{ on: ゆう }, { kun: あ(る) }]
+    exclude: [う]
+    words:
+      - { word: 有名, kana: ゆうめい, reading: ゆう, distractors: [ゆうみょう, うめい, あめい] }
+  - kanji: 遊
+    readings: [{ on: ゆう }, { kun: あそ(ぶ) }]
+    exclude: [ゆ]
+    words:
+      - { word: "遊{園|えん}地", kana: ゆうえんち, reading: ゆう, distractors: [あそえんち, ゆえんち, ゆうえんじ] }
+    sentences:
+      - { text: "公園で 友だちと [遊]ぶ。", reading: あそ, distractors: [ゆう, ゆ, あさ] }
+  - kanji: 予
+    readings: [{ on: よ }]
+    words:
+      - { word: 予定, kana: よてい, reading: よ, distractors: [よじょう, よさだ, ようてい] }
+  - kanji: 羊
+    readings: [{ on: よう }, { kun: ひつじ }]
+    words:
+      - { word: 羊毛, kana: ようもう, reading: よう, distractors: [ひつじげ, ようけ, ひつじもう] }
+    sentences:
+      - { text: "{牧|ぼく}場で [羊]を 見た。", reading: ひつじ, distractors: [よう, ひじつ, ひつぎ] }
+  - kanji: 洋
+    readings: [{ on: よう }]
+    words:
+      - { word: 西洋, kana: せいよう, reading: よう, distractors: [にしよう, さいよう, せいおう] }
+  - kanji: 葉
+    readings: [{ on: よう }, { kun: は }]
+    words:
+      - { word: 子葉, kana: しよう, reading: よう, distractors: [こは, しは, こよう] }
+    sentences:
+      - { text: "秋に なると [葉]が 赤く なる。", reading: は, distractors: [よう, ば, め] }
+  - kanji: 陽
+    readings: [{ on: よう }]
+    words:
+      - { word: 太陽, kana: たいよう, reading: よう, distractors: [たいひ, だいよう, たよう] }
+  - kanji: 様
+    readings: [{ on: よう }, { kun: さま }]
+    words:
+      - { word: 様子, kana: ようす, reading: よう, distractors: [ようこ, さまこ, さまし] }
+    sentences:
+      - { text: "王[様]の おしろに 行く。", reading: さま, distractors: [よう, ざま, さん] }
+  - kanji: 落
+    readings: [{ on: らく }, { kun: お(ちる) }]
+    exclude: [お(とす)]
+    words:
+      - { word: 落下, kana: らっか, reading: らく, distractors: [らくか, おちか, らくげ] }
+    sentences:
+      - { text: "木から 葉が [落]ちる。", reading: お, distractors: [らく, も, く] }
+  - kanji: 流
+    readings: [{ on: りゅう }, { kun: なが(れる) }]
+    exclude: [る, なが(す)]
+    words:
+      - { word: 電流, kana: でんりゅう, reading: りゅう, distractors: [でんる, でんなが, てんりゅう] }
+    sentences:
+      - { text: "川の 水が [流]れる。", reading: なが, distractors: [りゅう, る, なか] }
+  - kanji: 旅
+    readings: [{ on: りょ }, { kun: たび }]
+    words:
+      - { word: 旅行, kana: りょこう, reading: りょ, distractors: [たびこう, りょぎょう, りょうこう] }
+    sentences:
+      - { text: "家族で [旅]に 出る。", reading: たび, distractors: [りょ, たべ, ため] }
+  - kanji: 両
+    readings: [{ on: りょう }]
+    words:
+      - { word: 両手, kana: りょうて, reading: りょう, distractors: [りょうしゅ, りょて, りょうで] }
+  - kanji: 緑
+    readings: [{ on: りょく }, { kun: みどり }]
+    exclude: [ろく]
+    words:
+      - { word: 緑茶, kana: りょくちゃ, reading: りょく, distractors: [みどりちゃ, ろくちゃ, りょっちゃ] }
+    sentences:
+      - { text: "山の [緑]が きれいだ。", reading: みどり, distractors: [りょく, ろく, みとり] }
+  - kanji: 礼
+    readings: [{ on: れい }]
+    exclude: [らい]
+    words:
+      - { word: 朝礼, kana: ちょうれい, reading: れい, distractors: [あされい, ちょうらい, ちょれい] }
+  - kanji: 列
+    readings: [{ on: れつ }]
+    words:
+      - { word: 行列, kana: ぎょうれつ, reading: れつ, distractors: [こうれつ, ぎょうれっ, いきれつ] }
+  - kanji: 練
+    readings: [{ on: れん }]
+    exclude: [ね(る)]
+    words:
+      - { word: 練習, kana: れんしゅう, reading: れん, distractors: [ねしゅう, れんじゅう, れんなら] }
+  - kanji: 路
+    readings: [{ on: ろ }]
+    exclude: [じ]
+    words:
+      - { word: 道路, kana: どうろ, reading: ろ, distractors: [みちろ, どうじ, とうろ] }
+  - kanji: 和
+    readings: [{ on: わ }]
+    exclude: [お, やわ(らぐ), やわ(らげる), なご(む), なご(やか)]
+    words:
+      - { word: 和食, kana: わしょく, reading: わ, distractors: [おしょく, わじき, わっしょく] }
