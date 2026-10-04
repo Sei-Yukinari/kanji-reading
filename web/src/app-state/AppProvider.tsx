@@ -95,6 +95,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // オフライン動作のための Service Worker(本番ビルドのみ生成される。FR-019)
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("Service Worker の登録に失敗しました", e));
+  }, []);
+
   useEffect(() => {
     sound.enabled = settings?.sound ?? true;
   }, [settings, sound]);
