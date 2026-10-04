@@ -1,6 +1,6 @@
 // 問題データの検証(docs/design/04-functional-spec.mdx「検証スクリプトのチェック項目」)
 
-import { fullReading } from "./content";
+import { ownReadingForms } from "./content";
 import type { GradeData } from "./types";
 
 const HIRAGANA = /^[ぁ-ゖー]+$/u;
@@ -35,6 +35,9 @@ export function validateGrade(data: GradeData, ctx: ValidationContext): string[]
       .flatMap(([, ks]) => ks),
   );
 
+  // 読みのない漢字は習得判定(全読みが習得済み)が常に真になるため許可しない
+  for (const k of data.kanji) if (k.readings.length === 0) err(`読みのない漢字: ${k.kanji}`);
+
   const ids = new Set<string>();
   const readingsWithQuestion = new Set<string>();
   const readingById = new Map(data.kanji.flatMap((k) => k.readings.map((r) => [r.readingId, { r, k }] as const)));
@@ -59,9 +62,9 @@ export function validateGrade(data: GradeData, ctx: ValidationContext): string[]
     // 3. 選択肢がすべてひらがな
     for (const c of choices) if (!HIRAGANA.test(c)) err(`ひらがな以外の選択肢: ${where} (${c})`);
 
-    // 4. 単漢字問題の誤答に対象漢字の他の読みが含まれない
+    // 4. 単漢字問題の誤答に対象漢字の他の読み(出題しない読みを含む)が含まれない
     if (q.format === "single") {
-      const own = new Set(ref.k.readings.flatMap((r) => [r.kana, fullReading(r)]));
+      const own = ownReadingForms(ref.k);
       for (const d of q.distractors) if (own.has(d)) err(`誤答に対象漢字の読みが含まれる: ${where} (${d})`);
     }
 

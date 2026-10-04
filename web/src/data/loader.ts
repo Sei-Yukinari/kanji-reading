@@ -37,14 +37,25 @@ export async function loadManifest(): Promise<Manifest> {
   return m;
 }
 
+async function fetchGrade(file: string, grade: number): Promise<GradeData> {
+  const d = await fetchJson<GradeData>(file);
+  if (d.grade !== grade || !Array.isArray(d.questions)) throw new DataLoadError("もんだいが よみこめませんでした", "broken");
+  return d;
+}
+
 export function loadGradeData(manifest: Manifest, grade: number): Promise<GradeData> {
   const info = manifest.grades.find((g) => g.grade === grade);
   if (!info) return Promise.reject(new DataLoadError("じゅんびちゅう", "broken"));
   let p = cache.get(info.file);
   if (!p) {
-    p = fetchJson<GradeData>(info.file).then((d) => {
-      if (d.grade !== grade || !Array.isArray(d.questions)) throw new DataLoadError("もんだいが よみこめませんでした", "broken");
-      return d;
+    p = fetchGrade(info.file, grade).catch(async (e: unknown) => {
+      // 配信更新の直後は、起動時に読んだ manifest が指すファイル名(ハッシュ)が存在しないことがある。
+      // manifest を取り直して 1 回だけ再試行する(機能設計「キャッシュを破棄して再取得」)
+      if (!(e instanceof DataLoadError) || e.kind !== "broken") throw e;
+      const fresh = await loadManifest();
+      const latest = fresh.grades.find((g) => g.grade === grade);
+      if (!latest || latest.file === info.file) throw e;
+      return fetchGrade(latest.file, grade);
     });
     // 失敗したら次回は再取得する
     p.catch(() => cache.delete(info.file));

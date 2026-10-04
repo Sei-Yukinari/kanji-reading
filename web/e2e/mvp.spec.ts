@@ -70,6 +70,19 @@ test("「やめる」で中断すると記録は残らない", async ({ page }) 
   await expect(page.getByRole("button", { name: /ふくしゅう/ })).toBeDisabled();
 });
 
+test("正誤表示中に「やめる」→「つづける」しても問題が飛ばない", async ({ page }) => {
+  await createFirstProfile(page);
+  await page.getByRole("button", { name: /れんしゅう/ }).click();
+  await page.getByRole("button", { name: /ステージ 1/ }).click();
+  await page.locator("[data-testid=choice][data-correct]").click();
+  await expect(page.getByTestId("feedback")).not.toBeEmpty();
+  await page.getByRole("button", { name: "やめる" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "つづける" }).click();
+  // ダイアログのタップが背面の「タップで次へ」に伝わると 3 問目へ飛ぶ
+  await expect(page.getByRole("list", { name: /もんめ/ })).toHaveAttribute("aria-label", "2もんめ / 10もん");
+  await expect(page.getByTestId("feedback")).toBeEmpty();
+});
+
 test("プロフィールを追加・切替・削除できる(FR-016)", async ({ page }) => {
   await createFirstProfile(page, "あに");
   await page.getByRole("link", { name: /あに/ }).click();

@@ -31,7 +31,10 @@ export interface ContentSentence {
 
 export interface ContentKanji {
   kanji: string;
+  /** 出題する読み */
   readings: ContentReading[];
+  /** 出題しないが正しい読み(誤答に使わない)。表記は readings と同じ */
+  exclude?: string[];
   words?: ContentWord[];
   sentences?: ContentSentence[];
 }
@@ -54,6 +57,16 @@ export function readingNotation(r: Pick<Reading, "kana" | "okurigana">): string 
 
 export function fullReading(r: Pick<Reading, "kana" | "okurigana">): string {
   return r.kana + (r.okurigana ?? "");
+}
+
+/** 漢字の「正しい読み」として扱う表記の集合(語幹と送り仮名込みの両方)。出題する読みと除外リストの両方を含む */
+export function ownReadingForms(k: Pick<KanjiEntry, "readings" | "excludedReadings">): Set<string> {
+  const forms = k.readings.flatMap((r) => [r.kana, fullReading(r)]);
+  for (const notation of k.excludedReadings ?? []) {
+    const parsed = parseReadingNotation(notation);
+    forms.push(parsed.kana, fullReading(parsed));
+  }
+  return new Set(forms);
 }
 
 export function audioIdOf(kana: string): string {
@@ -120,6 +133,7 @@ export function buildGrade(content: GradeContent): { data: GradeData; units: Uni
       kanji: k.kanji,
       unitId: `g${g}-u${unitNo}`,
       order: i + 1,
+      ...(k.exclude?.length ? { excludedReadings: k.exclude } : {}),
       readings: k.readings.map((cr) => {
         const type = cr.on !== undefined ? "on" : "kun";
         const parsed = parseReadingNotation((cr.on ?? cr.kun)!);
@@ -147,7 +161,7 @@ export function buildGrade(content: GradeContent): { data: GradeData; units: Uni
 
   content.kanji.forEach((ck, i) => {
     const entry = kanji[i];
-    const ownForms = new Set(entry.readings.flatMap((r) => [r.kana, fullReading(r)]));
+    const ownForms = ownReadingForms(entry);
     const findReading = (notation: string) => {
       // 送り仮名付きの表記 "のぼ(る)" か、語幹が一意なら "のぼ" でも指定できる
       const exact = entry.readings.find((x) => readingNotation(x) === notation);

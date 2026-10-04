@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useApp } from "../app-state/AppProvider";
+import type { StoreFallbackReason } from "../store/db";
+
+/** 記録を保存できないときの案内(docs/design/04-functional-spec.mdx エラーハンドリング) */
+export const STORE_NOTICE: Record<StoreFallbackReason, string> = {
+  unavailable: "きろくが ほぞんできない せってい です(れんしゅうは できます)",
+  broken: "きろくを よみこめませんでした。いまの れんしゅうは ほぞんされません",
+};
 
 export function Screen({
   title,
@@ -33,7 +40,7 @@ export function Screen({
       )}
       {store && !store.persistent && (
         <p role="alert" className="mb-3 rounded-lg bg-canvas px-4 py-3 text-[15px] text-wrong ring-1 ring-wrong/30">
-          きろくが ほぞんできない せってい です(れんしゅうは できます)
+          {STORE_NOTICE[store.fallbackReason ?? "unavailable"]}
         </p>
       )}
       <main className={`flex flex-1 flex-col ${className}`}>{children}</main>

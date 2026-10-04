@@ -18,7 +18,13 @@ export interface KanjiEntry {
   unitId: string;
   /** 学年内の配当表の掲載順(1 始まり) */
   order: number;
+  /** 出題する読み */
   readings: Reading[];
+  /**
+   * 出題しないが、この漢字の読みとして正しいもの(常用漢字表の残りの音訓。表記は readings と同じ "さ(げる)" 形式)。
+   * 単漢字問題の誤答に使わないための除外リスト。
+   */
+  excludedReadings?: string[];
 }
 
 export interface Ruby {

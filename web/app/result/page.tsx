@@ -3,7 +3,7 @@
 // SCR-006 結果(FR-002, FR-011, FR-012)
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MEDALS } from "@/engine/medals";
 import { Button } from "@/ui/Button";
 import { QuestionText } from "@/ui/QuestionText";
@@ -21,8 +21,22 @@ export default function ResultPage() {
     if (app && !result) router.replace("/home/");
   }, [app, result, router]);
 
+  // ふくしゅうは復習対象が残っているときだけ「もういちど」を出す(全問正解直後は空セットになるため)
+  const [reviewLeft, setReviewLeft] = useState<number | null>(null);
+  const store = app?.store;
+  const profileId = app?.profile?.id;
+  useEffect(() => {
+    if (!store || !profileId || !result || result.config.mode !== "review") return;
+    let cancelled = false;
+    void store.getReviewItems(profileId, result.config.grade).then((items) => !cancelled && setReviewLeft(items.length));
+    return () => {
+      cancelled = true;
+    };
+  }, [store, profileId, result]);
+
   if (!app || !result) return <Loading />;
   const { session, answers, items, newMedals, previousBestMs, saveFailed, config } = result;
+  const canRetry = config.mode !== "review" || (reviewLeft ?? 0) > 0;
   const wrong = answers.filter((a) => !a.correct).map((a) => items.find((i) => i.question.questionId === a.questionId)!.question);
   const perfect = session.correctCount === session.total;
   const modeLabel = config.mode === "time_attack" ? "タイムアタック" : config.mode === "review" ? "ふくしゅう" : "れんしゅう";
@@ -83,15 +97,17 @@ export default function ResultPage() {
       )}
 
       <div className="mt-auto flex flex-col gap-3 sm:flex-row">
-        <Button
-          className="flex-1"
-          onClick={() => {
-            app.setQuizConfig({ ...config });
-            router.replace("/quiz/");
-          }}
-        >
-          もういちど
-        </Button>
+        {canRetry && (
+          <Button
+            className="flex-1"
+            onClick={() => {
+              app.setQuizConfig({ ...config });
+              router.replace("/quiz/");
+            }}
+          >
+            もういちど
+          </Button>
+        )}
         <Button variant="secondary" className="flex-1" onClick={() => router.replace("/home/")}>
           ホームへ
         </Button>

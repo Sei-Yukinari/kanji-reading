@@ -38,6 +38,6 @@
   "exclude": [
     "node_modules",
     "out",
-    "src/sw"
+    "src/sw/sw.ts"
   ]
 }

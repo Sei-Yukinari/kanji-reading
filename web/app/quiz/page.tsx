@@ -57,6 +57,8 @@ function Quiz({ config }: { config: QuizConfig }) {
   /** 一時停止までに経過した現在の問題の時間 */
   const carriedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** finish を 2 回走らせない(保存の二重実行防止) */
+  const finishingRef = useRef(false);
 
   // --- 出題セットの準備 ---
   useEffect(() => {
@@ -113,13 +115,20 @@ function Quiz({ config }: { config: QuizConfig }) {
 
   const currentElapsed = () => carriedRef.current + (shownAtRef.current === null ? 0 : performance.now() - shownAtRef.current);
 
-  // --- バックグラウンド移行時の一時停止(タイムアタックのみ) ---
+  // --- バックグラウンド移行時の一時停止(タイムアタックのみ。FR-011 業務ルール) ---
   useEffect(() => {
     if (!isTA) return;
     const onVisibility = () => {
-      if (document.visibilityState === "hidden" && shownAtRef.current !== null) {
+      if (document.visibilityState !== "hidden") return;
+      if (shownAtRef.current !== null) {
+        // 計測中: 経過時間を保持して止める
         carriedRef.current = currentElapsed();
         shownAtRef.current = null;
+        setPaused(true);
+      } else if (timerRef.current) {
+        // 正誤表示中: 自動遷移を止め、次の問題の計測が裏で始まらないようにする
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
         setPaused(true);
       }
     };
@@ -130,11 +139,13 @@ function Quiz({ config }: { config: QuizConfig }) {
   const resume = () => {
     setPaused(false);
     if (phase === "question") shownAtRef.current = performance.now();
+    else if (phase === "feedback") next();
   };
 
   // --- セット完了: まとめて保存して結果へ ---
   const finish = useCallback(async () => {
-    if (!store || !profile || !dataRef.current) return;
+    if (!store || !profile || !dataRef.current || finishingRef.current) return;
+    finishingRef.current = true;
     setPhase("saving");
     sound.play("complete");
     const answers = answersRef.current;
@@ -194,6 +205,7 @@ function Quiz({ config }: { config: QuizConfig }) {
   }, [store, profile, sound, isTA, config, items, setResult, router]);
 
   const next = useCallback(() => {
+    if (phase === "saving") return;
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = null;
     setChosen(null);
@@ -203,7 +215,7 @@ function Quiz({ config }: { config: QuizConfig }) {
       setIndex((i) => i + 1);
       setPhase("question");
     }
-  }, [index, items.length, finish]);
+  }, [phase, index, items.length, finish]);
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -268,7 +280,8 @@ function Quiz({ config }: { config: QuizConfig }) {
   void now;
 
   const promptSize =
-    q.format === "single" ? "text-[120px] sm:text-[160px] leading-none" : q.format === "word" ? "text-[72px] sm:text-[96px] leading-tight" : "text-[30px] sm:text-[44px] leading-[1.9] [word-break:keep-all]";
+    // 単漢字 120px 以上・熟語 80px 以上(docs/design/01-ui-ux.mdx)。熟語は最長 3 字なので幅 360px でも収まる
+    q.format === "single" ? "text-[120px] sm:text-[160px] leading-none" : q.format === "word" ? "text-[80px] sm:text-[96px] leading-tight" : "text-[30px] sm:text-[44px] leading-[1.9] [word-break:keep-all]";
 
   return (
     <div

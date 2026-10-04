@@ -19,7 +19,13 @@ export function ConfirmDialog({
   onCancel(): void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true">
+    // 背面の画面(出題画面の「タップで次へ」等)にクリックを伝えない
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      role="dialog"
+      aria-modal="true"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="pop-in w-full max-w-sm rounded-lg bg-canvas p-6 text-center">
         <p className="mb-6 text-[20px] font-bold leading-relaxed">{message}</p>
         <div className="flex flex-col gap-3">

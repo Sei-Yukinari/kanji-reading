@@ -73,7 +73,11 @@ export default function SettingsPage() {
           <li>きろくは この たんまつの なかだけに ほぞんされます。ほかの たんまつとは きょうゆう されません</li>
           <li>ブラウザの データを けしたり、たんまつを かえたりすると きろくは きえます</li>
           <li>ブラウザによっては、しばらく つかわないと きろくが けされることが あります。ホームがめんに ついかすると きえにくく なります</li>
-          {store && !store.persistent && <li className="text-wrong">いまの せっていでは きろくが ほぞんできません</li>}
+          {store && !store.persistent && (
+            <li className="text-wrong">
+              {store.fallbackReason === "broken" ? "きろくを よみこめなかったため、いまは ほぞんできません。アプリを さいしんに すると なおることが あります" : "いまの せっていでは きろくが ほぞんできません"}
+            </li>
+          )}
         </ul>
         <Link href="/install/" className="press mx-4 mb-4 flex min-h-12 items-center justify-center rounded-pill bg-primary text-[18px] font-bold text-white">
           ホームがめんに ついか

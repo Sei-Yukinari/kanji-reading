@@ -2,7 +2,7 @@ import { IDBKeyRange, indexedDB } from "fake-indexeddb";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_ANSWERS_PER_PROFILE } from "../config";
 import type { AnswerRecord, Profile, SessionRecord } from "../engine/types";
-import { LearningDB, LearningStore } from "./db";
+import { classifyOpenError, LearningDB, LearningStore } from "./db";
 
 let store: LearningStore;
 let n = 0;
@@ -91,5 +91,16 @@ describe("LearningStore", () => {
     ]);
     await store.purgeRemovedQuestions(["old"]);
     expect((await store.getReviewItems("a")).map((r) => r.questionId)).toEqual(["keep"]);
+  });
+});
+
+describe("openStore のフォールバック理由", () => {
+  it("スキーマ移行系のエラーは broken、それ以外は unavailable", () => {
+    expect(classifyOpenError(Object.assign(new Error("x"), { name: "VersionError" }))).toBe("broken");
+    // Dexie は open 失敗を OpenFailedError に包み、元のエラーを inner に持つ
+    expect(classifyOpenError({ name: "OpenFailedError", inner: { name: "UpgradeError" } })).toBe("broken");
+    expect(classifyOpenError({ name: "OpenFailedError", inner: { name: "SecurityError" } })).toBe("unavailable");
+    expect(classifyOpenError(new Error("IndexedDB unavailable"))).toBe("unavailable");
+    expect(classifyOpenError(undefined)).toBe("unavailable");
   });
 });

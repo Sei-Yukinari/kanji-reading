@@ -55,12 +55,21 @@ export interface SessionResultToSave {
   medals: MedalAward[];
 }
 
+/**
+ * 端末の IndexedDB を開けなかった理由(docs/design/04-functional-spec.mdx エラーハンドリング)
+ * - unavailable: IndexedDB が使えない(プライベートブラウズ等)
+ * - broken: 学習データのスキーマ移行に失敗した(新しいバージョンの DB が残っている等)。旧データは消さずに保持する
+ */
+export type StoreFallbackReason = "unavailable" | "broken";
+
 /** 学習データの読み書き。IndexedDB が使えない場合はメモリ上で動作し、記録は残らない */
 export class LearningStore {
   constructor(
     readonly db: LearningDB,
     /** false のとき記録は端末に保存されない(プライベートブラウズ等) */
     readonly persistent: boolean,
+    /** persistent が false のときの理由 */
+    readonly fallbackReason?: StoreFallbackReason,
   ) {}
 
   // --- プロフィール・設定(FR-016, FR-010) ---
@@ -187,6 +196,7 @@ export class LearningStore {
  * 学習は続けられるが記録は保存しない(docs/design/04-functional-spec.mdx エラーハンドリング)。
  */
 export async function openStore(): Promise<LearningStore> {
+  let reason: StoreFallbackReason;
   try {
     if (typeof indexedDB === "undefined") throw new Error("IndexedDB unavailable");
     const db = new LearningDB();
@@ -194,12 +204,25 @@ export async function openStore(): Promise<LearningStore> {
     void requestPersistence();
     return new LearningStore(db, true);
   } catch (e) {
-    console.warn("IndexedDB を使えないため、記録を保存しないモードで起動します", e);
-    const { indexedDB: memIDB, IDBKeyRange: memRange } = await import("fake-indexeddb");
-    const db = new LearningDB("kanji-reading-memory", { indexedDB: memIDB, IDBKeyRange: memRange });
-    await db.open();
-    return new LearningStore(db, false);
+    reason = classifyOpenError(e);
+    console.warn(
+      reason === "broken" ? "学習データを開けないため(スキーマ不一致)、旧データを保持したまま記録を保存しないモードで起動します" : "IndexedDB を使えないため、記録を保存しないモードで起動します",
+      e,
+    );
   }
+  const { indexedDB: memIDB, IDBKeyRange: memRange } = await import("fake-indexeddb");
+  const db = new LearningDB("kanji-reading-memory", { indexedDB: memIDB, IDBKeyRange: memRange });
+  await db.open();
+  return new LearningStore(db, false, reason);
+}
+
+/** Dexie の open 失敗を分類する。スキーマ移行系のエラーは `inner` に包まれていることがあるので辿る */
+export function classifyOpenError(e: unknown): StoreFallbackReason {
+  const MIGRATION_ERRORS = new Set(["VersionError", "UpgradeError", "SchemaError"]);
+  for (let cur = e as { name?: unknown; inner?: unknown } | null, depth = 0; cur && typeof cur === "object" && depth < 5; cur = cur.inner as typeof cur, depth++) {
+    if (typeof cur.name === "string" && MIGRATION_ERRORS.has(cur.name)) return "broken";
+  }
+  return "unavailable";
 }
 
 /** ブラウザによる自動削除を避けるため、ストレージの永続化を要求する(NFR-014)。拒否されても続行 */
