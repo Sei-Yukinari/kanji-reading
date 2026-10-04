@@ -23,8 +23,9 @@ type Mora = { text: string };
 type AccentPhrase = { moras: Mora[]; accent: number };
 
 const toKatakana = (s: string) => s.replace(/[\u3041-\u3096]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0x60));
-/** 「オウ」→「オオ」のように、VOICEVOX が長音として解析する表記に揃える */
-const normalizeLongVowel = (s: string) => s.replace(/([オコソトノホモヨロゴゾドボポョ])ウ/g, "$1オ");
+/** 「オウ」→「オオ」「エイ」→「エエ」のように、VOICEVOX が長音として解析する表記に揃える */
+const normalizeLongVowel = (s: string) =>
+  s.replace(/([オコソトノホモヨロゴゾドボポョ])ウ/g, "$1オ").replace(/([エケセテネヘメレゲゼデベペ])イ/g, "$1エ");
 
 /**
  * テキスト解析の結果が読みと一致するか確認し、一致しなければカナ指定で読みを固定する。
