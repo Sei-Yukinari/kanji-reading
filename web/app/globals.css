@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* 出題用フォント(T-007)。問題データの文字だけにサブセット化(scripts/build-font.ts) */
+@font-face {
+  font-family: "Klee One";
+  src: url("/fonts/klee-one-semibold.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 /* DESIGN.md + docs/design/01-ui-ux.mdx のカラートークン */
 @theme {
   --color-primary: #0066cc;
