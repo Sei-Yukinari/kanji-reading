@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { prefetchVoices } from "@/audio/prefetch";
 import { GRADES } from "@/config";
 import { isStandalone } from "@/sw/platform";
 import { Loading, Screen } from "@/ui/Screen";
@@ -29,6 +30,13 @@ export default function HomePage() {
       cancelled = true;
     };
   }, [store, profileId, grade]);
+
+  const manifestForPrefetch = app?.manifest;
+  const voiceOn = app?.settings?.voice;
+  const loadGradeFn = app?.loadGrade;
+  useEffect(() => {
+    if (voiceOn && manifestForPrefetch && loadGradeFn) prefetchVoices(manifestForPrefetch, grade, loadGradeFn);
+  }, [voiceOn, manifestForPrefetch, grade, loadGradeFn]);
 
   if (!app || !app.profile) return <Loading />;
   const { profile, manifest, manifestError, setGrade, setQuizConfig } = app;

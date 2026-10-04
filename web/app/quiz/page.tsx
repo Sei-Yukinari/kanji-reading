@@ -5,6 +5,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useApp, type QuizConfig, type QuizResult } from "@/app-state/AppProvider";
+import { voiceUrl } from "@/audio/sound";
 import { COUNTDOWN_SECONDS, FEEDBACK_MS, TIME_ATTACK_PENALTY_MS } from "@/config";
 import type { GradeData } from "@/data/types";
 import { evaluateMedals } from "@/engine/medals";
@@ -33,7 +34,7 @@ export default function QuizPage() {
 }
 
 function Quiz({ config }: { config: QuizConfig }) {
-  const { store, profile, loadGrade, sound, setResult } = useApp();
+  const { store, profile, settings, loadGrade, sound, setResult } = useApp();
   const router = useRouter();
   const isTA = config.mode === "time_attack";
   const feedbackMs = isTA ? FEEDBACK_MS.time_attack : FEEDBACK_MS.practice;
@@ -57,6 +58,7 @@ function Quiz({ config }: { config: QuizConfig }) {
   /** 一時停止までに経過した現在の問題の時間 */
   const carriedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const voiceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** finish を 2 回走らせない(保存の二重実行防止) */
   const finishingRef = useRef(false);
 
@@ -98,13 +100,15 @@ function Quiz({ config }: { config: QuizConfig }) {
     return () => clearTimeout(t);
   }, [phase, countdown]);
 
-  // 問題を表示したら計測開始
+  // 問題を表示したら計測開始。正解の読み上げ音声を先読みしておく
   useEffect(() => {
     if (phase === "question") {
       shownAtRef.current = performance.now();
       carriedRef.current = 0;
+      const q = items[index]?.question;
+      if (q) sound.preloadVoice(voiceUrl(config.grade, q.audioId));
     }
-  }, [phase, index]);
+  }, [phase, index, items, sound, config.grade]);
 
   // タイムアタックの経過時間表示
   useEffect(() => {
@@ -208,6 +212,8 @@ function Quiz({ config }: { config: QuizConfig }) {
     if (phase === "saving") return;
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = null;
+    if (voiceTimerRef.current) clearTimeout(voiceTimerRef.current);
+    sound.stopVoice();
     setChosen(null);
     if (index + 1 >= items.length) {
       void finish();
@@ -219,6 +225,7 @@ function Quiz({ config }: { config: QuizConfig }) {
 
   useEffect(() => () => {
     if (timerRef.current) clearTimeout(timerRef.current);
+    if (voiceTimerRef.current) clearTimeout(voiceTimerRef.current);
   }, []);
 
   // --- 回答(FR-006, FR-007) ---
@@ -231,6 +238,8 @@ function Quiz({ config }: { config: QuizConfig }) {
     setChosen(choice);
     setPhase("feedback");
     sound.play(correct ? "correct" : "wrong");
+    // 正しい読みを読み上げる(FR-009)。効果音と重ならないよう少し遅らせる。読み上げ中でも表示時間が来たら次へ進む
+    voiceTimerRef.current = setTimeout(() => void sound.playVoice(voiceUrl(config.grade, item.question.audioId)), 250);
     answersRef.current = [
       ...answersRef.current,
       {
@@ -333,9 +342,27 @@ function Quiz({ config }: { config: QuizConfig }) {
           <p className={`font-kanji text-center ${promptSize}`} data-testid="prompt">
             <QuestionText prompt={q.prompt} ruby={q.ruby} highlight={q.highlight} underline={q.format === "sentence"} />
           </p>
-          <p className={`min-h-10 text-[28px] font-bold ${correct ? "text-correct" : "text-wrong"}`} aria-live="polite" data-testid="feedback">
-            {answered && (correct ? `⭕️ せいかい! ${q.answer}` : `❌ こたえは「${q.answer}」`)}
-          </p>
+          <div className="flex min-h-11 items-center gap-2">
+            <p className={`text-[28px] font-bold ${correct ? "text-correct" : "text-wrong"}`} aria-live="polite" data-testid="feedback">
+              {answered && (correct ? `⭕️ せいかい! ${q.answer}` : `❌ こたえは「${q.answer}」`)}
+            </p>
+            {answered && settings?.voice && (
+              <button
+                type="button"
+                aria-label="よみあげ"
+                className="press flex size-11 items-center justify-center rounded-full bg-parchment text-[22px]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // もう一度聞くときは自動で次へ進まないようにする
+                  if (timerRef.current) clearTimeout(timerRef.current);
+                  timerRef.current = null;
+                  void sound.playVoice(voiceUrl(config.grade, q.audioId));
+                }}
+              >
+                🔈
+              </button>
+            )}
+          </div>
         </section>
 
         <div className="grid grid-cols-2 gap-3 landscape:w-[46%]">

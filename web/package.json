@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run data:build && next dev",
     "data:build": "tsx scripts/build-data.ts",
-    "build": "npm run data:build && npm test && next build && tsx scripts/build-sw.ts",
+    "build": "npm run data:build -- --strict-audio && npm test && next build && tsx scripts/build-sw.ts",
     "start": "npx serve out -l 3000",
     "test": "vitest run",
     "test:watch": "vitest",

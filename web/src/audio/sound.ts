@@ -1,4 +1,5 @@
 // サウンドプレイヤー(T-005: Web Audio API)。効果音は音源ファイルを持たず合成する。
+// 読み上げ音声(FR-009)も同じ AudioContext で再生し、自動遷移中もアンロック状態を保つ。
 // iOS の自動再生制限のため、最初のタップで AudioContext をアンロックする。
 
 export type SoundEffect = "correct" | "wrong" | "complete";
@@ -22,9 +23,18 @@ const EFFECTS: Record<SoundEffect, Note[]> = {
   ],
 };
 
+const VOICE_CACHE_LIMIT = 40;
+
+export function voiceUrl(grade: number, audioId: string): string {
+  return `/audio/${grade}/${audioId}.m4a`;
+}
+
 export class SoundPlayer {
   private ctx: AudioContext | null = null;
   enabled = true;
+  voiceEnabled = true;
+  private voices = new Map<string, Promise<AudioBuffer | null>>();
+  private currentVoice: AudioBufferSourceNode | null = null;
 
   /** ユーザー操作のイベント内で呼ぶ */
   unlock(): void {
@@ -38,6 +48,61 @@ export class SoundPlayer {
     } catch {
       this.ctx = null;
     }
+  }
+
+  /** 読み上げ音声を先に取得・デコードしておく(回答直後に遅延なく再生するため) */
+  preloadVoice(url: string): void {
+    if (!this.voiceEnabled) return;
+    void this.loadVoice(url);
+  }
+
+  private loadVoice(url: string): Promise<AudioBuffer | null> {
+    let p = this.voices.get(url);
+    if (!p) {
+      p = (async () => {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) return null;
+          const data = await res.arrayBuffer();
+          const ctx = this.ctx ?? new OfflineAudioContext(1, 1, 24000);
+          return await ctx.decodeAudioData(data);
+        } catch {
+          return null;
+        }
+      })();
+      this.voices.set(url, p);
+      // 古いものから捨てる
+      if (this.voices.size > VOICE_CACHE_LIMIT) this.voices.delete(this.voices.keys().next().value!);
+      void p.then((b) => b ?? this.voices.delete(url));
+    }
+    return p;
+  }
+
+  /** 正解の読みを読み上げる。取得・再生に失敗した場合は何もしない(学習は継続) */
+  async playVoice(url: string): Promise<void> {
+    if (!this.voiceEnabled) return;
+    const buffer = await this.loadVoice(url);
+    const ctx = this.ctx;
+    if (!buffer || !ctx || ctx.state !== "running") return;
+    try {
+      this.stopVoice();
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(ctx.destination);
+      src.start();
+      this.currentVoice = src;
+    } catch {
+      // 再生失敗時は読み上げをスキップ
+    }
+  }
+
+  stopVoice(): void {
+    try {
+      this.currentVoice?.stop();
+    } catch {
+      // 再生終了済み
+    }
+    this.currentVoice = null;
   }
 
   play(effect: SoundEffect): void {

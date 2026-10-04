@@ -103,6 +103,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     sound.enabled = settings?.sound ?? true;
+    sound.voiceEnabled = settings?.voice ?? true;
   }, [settings, sound]);
 
   // 最初のタップで AudioContext をアンロックする(iOS の自動再生制限)
