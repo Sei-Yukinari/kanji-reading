@@ -53,7 +53,7 @@ export default function ResultPage() {
           <div className="mt-2 flex flex-col items-center gap-1">
             <p className="text-[28px] font-bold tabular-nums">タイム {formatSec(session.timeMs)}</p>
             {session.newBest ? (
-              <p className="pop-in rounded-pill bg-primary px-5 py-1 text-[20px] font-bold text-white">じこベスト こうしん!</p>
+              <p className="pop-in rounded-pill bg-primary-fill px-5 py-1 text-[20px] font-bold text-on-primary">じこベスト こうしん!</p>
             ) : (
               previousBestMs !== undefined && <p className="text-[17px] text-ink-muted">じこベスト {formatSec(previousBestMs)}</p>
             )}

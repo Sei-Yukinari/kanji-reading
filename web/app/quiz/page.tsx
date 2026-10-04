@@ -260,7 +260,7 @@ function Quiz({ config }: { config: QuizConfig }) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-6 p-6 text-center">
         <p className="text-[22px] font-bold text-wrong">{error}</p>
-        <button type="button" className="press min-h-14 rounded-pill bg-primary px-8 text-[20px] font-bold text-white" onClick={() => router.replace("/home/")}>
+        <button type="button" className="press min-h-14 rounded-pill bg-primary-fill px-8 text-[20px] font-bold text-on-primary" onClick={() => router.replace("/home/")}>
           ホームへ
         </button>
       </div>

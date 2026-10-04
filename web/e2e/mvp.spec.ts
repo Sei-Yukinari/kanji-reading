@@ -133,3 +133,28 @@ test("よみあげを OFF にすると音声を取得しない(FR-010)", async (
   await expect(page.getByRole("button", { name: "よみあげ" })).toHaveCount(0);
   expect(requested).toEqual([]);
 });
+
+test("せっていで くらい がめん を ON にするとダーク配色になり、再読み込み後も保たれる", async ({ page }) => {
+  const bg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  // OS がダークでも既定はライト
+  await page.emulateMedia({ colorScheme: "dark" });
+  await createFirstProfile(page);
+  expect(await bg()).toBe("rgb(245, 245, 247)");
+
+  await page.goto("/settings/");
+  const toggle = page.getByRole("switch", { name: "くらい がめん" });
+  await expect(toggle).not.toBeChecked();
+  await toggle.click();
+  await expect(toggle).toBeChecked();
+  expect(await bg()).toBe("rgb(0, 0, 0)");
+  await expect(page.locator("meta[name=theme-color]")).toHaveAttribute("content", "#000000");
+
+  await page.goto("/home/");
+  expect(await bg()).toBe("rgb(0, 0, 0)");
+
+  await page.goto("/settings/");
+  await page.getByRole("switch", { name: "くらい がめん" }).click();
+  expect(await bg()).toBe("rgb(245, 245, 247)");
+  await page.reload();
+  expect(await bg()).toBe("rgb(245, 245, 247)");
+});

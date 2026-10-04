@@ -98,7 +98,7 @@ export default function HomePage() {
               aria-pressed={selected}
               disabled={!ok}
               onClick={() => void setGrade(g)}
-              className={`press flex min-h-12 flex-col items-center justify-center rounded-pill text-[17px] font-bold ${selected ? "bg-primary text-white" : "text-ink"} disabled:text-ink-muted/60`}
+              className={`press flex min-h-12 flex-col items-center justify-center rounded-pill text-[17px] font-bold ${selected ? "bg-primary-fill text-on-primary" : "text-ink"} disabled:text-ink-muted/60`}
             >
               {g}ねん
             </button>
@@ -164,7 +164,7 @@ function ModeCard({
         <span className="text-[15px] text-ink-muted">{sub}</span>
       </span>
       {badge !== undefined && badge > 0 && (
-        <span className="flex min-w-9 items-center justify-center rounded-pill bg-primary px-2 py-1 text-[17px] font-bold text-white">{badge}</span>
+        <span className="flex min-w-9 items-center justify-center rounded-pill bg-primary-fill px-2 py-1 text-[17px] font-bold text-on-primary">{badge}</span>
       )}
     </button>
   );

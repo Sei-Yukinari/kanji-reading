@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes } from "react";
 type Variant = "primary" | "secondary" | "danger";
 
 const VARIANT: Record<Variant, string> = {
-  primary: "bg-primary text-white",
+  primary: "bg-primary-fill text-on-primary",
   secondary: "bg-canvas text-primary ring-1 ring-hairline",
   danger: "bg-canvas text-wrong ring-1 ring-hairline",
 };

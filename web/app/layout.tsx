@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AppProvider } from "@/app-state/AppProvider";
+import { THEME_INIT_SCRIPT } from "@/ui/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +20,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja">
+    // data-theme は初回描画前のスクリプトで付与するため、ハイドレーションの差分を許容する
+    <html lang="ja" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-dvh antialiased">
         <AppProvider>{children}</AppProvider>
       </body>
