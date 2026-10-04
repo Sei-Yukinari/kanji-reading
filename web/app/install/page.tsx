@@ -56,7 +56,7 @@ export default function InstallPage() {
           <ol className="space-y-3">
             {steps.map((s, i) => (
               <li key={s} className="flex items-start gap-3 text-[18px]">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-white">{i + 1}</span>
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-fill font-bold text-on-primary">{i + 1}</span>
                 <span className="pt-0.5">{s}</span>
               </li>
             ))}

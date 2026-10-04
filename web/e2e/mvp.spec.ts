@@ -133,3 +133,14 @@ test("よみあげを OFF にすると音声を取得しない(FR-010)", async (
   await expect(page.getByRole("button", { name: "よみあげ" })).toHaveCount(0);
   expect(requested).toEqual([]);
 });
+
+test("OS がダークモードならダーク配色で表示する", async ({ page }) => {
+  const bg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.emulateMedia({ colorScheme: "light" });
+  await createFirstProfile(page);
+  expect(await bg()).toBe("rgb(245, 245, 247)");
+
+  await page.emulateMedia({ colorScheme: "dark" });
+  expect(await bg()).toBe("rgb(0, 0, 0)");
+  await expect(page.locator("meta[name=theme-color][media*=dark]")).toHaveAttribute("content", "#000000");
+});

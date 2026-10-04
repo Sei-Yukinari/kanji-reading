@@ -88,7 +88,7 @@ export default function SettingsPage() {
             </li>
           )}
         </ul>
-        <Link href="/install/" className="press mx-4 mb-4 flex min-h-12 items-center justify-center rounded-pill bg-primary text-[18px] font-bold text-white">
+        <Link href="/install/" className="press mx-4 mb-4 flex min-h-12 items-center justify-center rounded-pill bg-primary-fill text-[18px] font-bold text-on-primary">
           ホームがめんに ついか
         </Link>
       </Section>

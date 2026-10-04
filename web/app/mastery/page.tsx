@@ -12,7 +12,7 @@ import { useRequireProfile } from "@/ui/useRequireProfile";
 const STATUS_CLASS: Record<KanjiStatus, string> = {
   new: "bg-canvas text-ink-muted/50 ring-1 ring-hairline",
   learning: "bg-canvas text-ink ring-1 ring-hairline",
-  mastered: "bg-primary text-white",
+  mastered: "bg-primary-fill text-on-primary",
 };
 const STATUS_LABEL: Record<KanjiStatus, string> = { new: "まだ", learning: "れんしゅうちゅう", mastered: "おぼえた" };
 
