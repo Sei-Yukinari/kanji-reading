@@ -75,3 +75,7 @@ npm run lint:md
 ```
 
 ルールは `.markdownlint.jsonc` で調整できます(日本語ドキュメント向けに MD013 等を無効化済み)。
+
+## アプリ本体
+
+漢字読み学習アプリの実装は `web/` 配下にあります(独立した Next.js プロジェクト)。開発・ビルド・テスト手順は [web/README.md](web/README.md) を参照してください。
