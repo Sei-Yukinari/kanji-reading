@@ -1,7 +1,7 @@
 // 配信する問題データの型(docs/design/08-api-list.mdx API-001 / API-002)
 
 export type ReadingType = "on" | "kun";
-export type QuestionFormat = "single" | "word" | "sentence";
+export type QuestionFormat = "word" | "sentence";
 
 export interface Reading {
   /** 例: "上:のぼ(る)" */
@@ -22,7 +22,7 @@ export interface KanjiEntry {
   readings: Reading[];
   /**
    * 出題しないが、この漢字の読みとして正しいもの(常用漢字表の残りの音訓。表記は readings と同じ "さ(げる)" 形式)。
-   * 単漢字問題の誤答に使わないための除外リスト。
+   * 人手チェック用の参考情報(出題はしない)。
    */
   excludedReadings?: string[];
 }
@@ -48,8 +48,6 @@ export interface Question {
   ruby: Ruby[];
   /** 出題対象の漢字の範囲(下線・強調) */
   highlight: Highlight;
-  /** 単漢字問題の音訓ヒント */
-  hint?: "おんよみ" | "くんよみ";
   answer: string;
   distractors: [string, string, string];
   audioId: string;

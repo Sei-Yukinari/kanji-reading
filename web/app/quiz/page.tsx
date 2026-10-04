@@ -289,8 +289,8 @@ function Quiz({ config }: { config: QuizConfig }) {
   void now;
 
   const promptSize =
-    // 単漢字 120px 以上・熟語 80px 以上(docs/design/01-ui-ux.mdx)。熟語は最長 3 字なので幅 360px でも収まる
-    q.format === "single" ? "text-[120px] sm:text-[160px] leading-none" : q.format === "word" ? "text-[80px] sm:text-[96px] leading-tight" : "text-[30px] sm:text-[44px] leading-[1.9] [word-break:keep-all]";
+    // 熟語 80px 以上(docs/design/01-ui-ux.mdx)。熟語は最長 3 字なので幅 360px でも収まる
+    q.format === "word" ? "text-[80px] sm:text-[96px] leading-tight" : "text-[30px] sm:text-[44px] leading-[1.9] [word-break:keep-all]";
 
   return (
     <div
@@ -334,9 +334,6 @@ function Quiz({ config }: { config: QuizConfig }) {
 
       <div className="flex flex-1 flex-col gap-6 py-4 landscape:flex-row landscape:items-center">
         <section className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-canvas p-6 ring-1 ring-hairline landscape:self-stretch">
-          {q.hint && (
-            <span className="rounded-pill bg-parchment px-4 py-1 text-[17px] font-bold text-ink-muted">{q.hint}で よむと?</span>
-          )}
           {q.format === "word" && <span className="text-[17px] font-bold text-ink-muted">ぜんぶの よみかたは?</span>}
           {q.format === "sentence" && <span className="text-[17px] font-bold text-ink-muted">せんの ひいてある かんじの よみかたは?</span>}
           <p className={`font-kanji text-center ${promptSize}`} data-testid="prompt">

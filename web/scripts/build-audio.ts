@@ -40,8 +40,9 @@ async function buildQuery(kana: string) {
   const parsed = normalizeLongVowel(phrases.flatMap((p) => p.moras.map((m) => m.text)).join(""));
   if (phrases.length === 1 && parsed === expected) return query;
 
-  // 1 つのアクセント句として、カナ(AquesTalk 風記法)で指定し直す。アクセント位置は解析結果の先頭句に合わせる
-  const moras = expected.match(/.[ャュョァィゥェォ]?/g)!;
+  // 1 つのアクセント句として、カナ(AquesTalk 風記法)で指定し直す。アクセント位置は解析結果の先頭句に合わせる。
+  // 長音に揃える前の表記を使う(「こううん」を「コオウン」にすると、続く「ウ」まで長音と解釈されて「コオオン」になるため)
+  const moras = toKatakana(kana).match(/.[ャュョァィゥェォ]?/g)!;
   const accent = Math.min(Math.max(phrases[0]?.accent ?? 1, 1), moras.length);
   const text = moras.slice(0, accent).join("") + "'" + moras.slice(accent).join("");
   const fixed = await fetch(`${ENGINE}/accent_phrases?text=${encodeURIComponent(text)}&speaker=${VOICE.speaker}&is_kana=true`, { method: "POST" });

@@ -18,7 +18,7 @@ const session = (profileId: string): SessionRecord => ({
   profileId, mode: "practice", grade: 1, unitId: "g1-u1", startedAt: 1, finishedAt: 2, total: 1, correctCount: 0,
 });
 const answer = (profileId: string, answeredAt: number): AnswerRecord => ({
-  profileId, questionId: "山:やま:single", readingId: "山:やま", kanji: "山", chosen: "かわ", correct: false, elapsedMs: 1, answeredAt,
+  profileId, questionId: "山:やま:sentence:1", readingId: "山:やま", kanji: "山", chosen: "かわ", correct: false, elapsedMs: 1, answeredAt,
 });
 
 describe("LearningStore", () => {
@@ -37,7 +37,7 @@ describe("LearningStore", () => {
         answers: [answer(id, 1)],
         outcome: {
           progress: [{ profileId: id, readingId: "山:やま", grade: 1, correctStreak: 0, status: "learning", lastAnsweredAt: 1, lastWrongAt: 1 }],
-          reviewAdd: [{ profileId: id, questionId: "山:やま:single", grade: 1, addedAt: 1 }],
+          reviewAdd: [{ profileId: id, questionId: "山:やま:sentence:1", grade: 1, addedAt: 1 }],
           reviewRemove: [],
         },
         best: { profileId: id, grade: 1, timeMs: 1000, achievedAt: 2 },

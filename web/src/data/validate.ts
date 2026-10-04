@@ -1,6 +1,6 @@
 // 問題データの検証(docs/design/04-functional-spec.mdx「検証スクリプトのチェック項目」)
 
-import { ownReadingForms } from "./content";
+import { MIN_WORDS_PER_KANJI } from "../config";
 import type { GradeData } from "./types";
 
 const HIRAGANA = /^[ぁ-ゖー]+$/u;
@@ -62,18 +62,12 @@ export function validateGrade(data: GradeData, ctx: ValidationContext): string[]
     // 3. 選択肢がすべてひらがな
     for (const c of choices) if (!HIRAGANA.test(c)) err(`ひらがな以外の選択肢: ${where} (${c})`);
 
-    // 4. 単漢字問題の誤答に対象漢字の他の読み(出題しない読みを含む)が含まれない
-    if (q.format === "single") {
-      const own = ownReadingForms(ref.k);
-      for (const d of q.distractors) if (own.has(d)) err(`誤答に対象漢字の読みが含まれる: ${where} (${d})`);
-    }
-
-    // 5. 出題範囲が出題漢字を指している
+    // 4. 出題範囲が出題漢字を指している
     const chars = [...q.prompt];
     const hl = chars.slice(q.highlight.start, q.highlight.start + q.highlight.length).join("");
     if (!hl.includes(q.kanji)) err(`出題範囲が出題漢字を指していない: ${where}`);
 
-    // 6. 問題文中の未習漢字にルビが付いている
+    // 5. 問題文中の未習漢字にルビが付いている
     chars.forEach((ch, i) => {
       if (!KANJI.test(ch) || learned.has(ch)) return;
       const covered = q.ruby.some((r) => i >= r.start && i < r.start + r.length);
@@ -81,8 +75,16 @@ export function validateGrade(data: GradeData, ctx: ValidationContext): string[]
     });
   }
 
-  // 7. すべての読みに 1 問以上
+  // 6. すべての読みに 1 問以上
   for (const id of readingById.keys()) if (!readingsWithQuestion.has(id)) err(`問題のない読み: ${id}`);
+
+  // 7. すべての漢字に熟語問題が MIN_WORDS_PER_KANJI 問以上
+  const wordCount = new Map<string, number>();
+  for (const q of data.questions) if (q.format === "word") wordCount.set(q.kanji, (wordCount.get(q.kanji) ?? 0) + 1);
+  for (const k of data.kanji) {
+    const n = wordCount.get(k.kanji) ?? 0;
+    if (n < MIN_WORDS_PER_KANJI) err(`熟語問題が ${MIN_WORDS_PER_KANJI} 問未満の漢字: ${k.kanji} (${n} 問)`);
+  }
 
   // 8. 既存リリースの問題 ID が削除・変更されていない
   const removed = new Set(ctx.removedQuestionIds ?? []);

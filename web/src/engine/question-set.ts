@@ -40,7 +40,7 @@ export function candidatesFor(input: Pick<QuestionSetInput, "mode" | "data" | "u
 function pick(ordered: Question[], size: number): Question[] {
   const picked: Question[] = [];
   const usedKanji = new Set<string>();
-  const perFormat: Record<QuestionFormat, number> = { single: 0, word: 0, sentence: 0 };
+  const perFormat: Record<QuestionFormat, number> = { word: 0, sentence: 0 };
   const pickedIds = new Set<string>();
 
   const pass = (strictKanji: boolean, strictFormat: boolean) => {
