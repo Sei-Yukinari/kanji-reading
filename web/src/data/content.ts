@@ -34,7 +34,7 @@ export interface ContentKanji {
   kanji: string;
   /** 出題する読み */
   readings: ContentReading[];
-  /** 出題しないが正しい読み(誤答に使わない)。表記は readings と同じ */
+  /** 出題しないが正しい読み(人手チェック用の参考情報)。表記は readings と同じ */
   exclude?: string[];
   words?: ContentWord[];
   sentences?: ContentSentence[];
@@ -58,16 +58,6 @@ export function readingNotation(r: Pick<Reading, "kana" | "okurigana">): string 
 
 export function fullReading(r: Pick<Reading, "kana" | "okurigana">): string {
   return r.kana + (r.okurigana ?? "");
-}
-
-/** 漢字の「正しい読み」として扱う表記の集合(語幹と送り仮名込みの両方)。出題する読みと除外リストの両方を含む */
-export function ownReadingForms(k: Pick<KanjiEntry, "readings" | "excludedReadings">): Set<string> {
-  const forms = k.readings.flatMap((r) => [r.kana, fullReading(r)]);
-  for (const notation of k.excludedReadings ?? []) {
-    const parsed = parseReadingNotation(notation);
-    forms.push(parsed.kana, fullReading(parsed));
-  }
-  return new Set(forms);
 }
 
 /** 音声 ID = 読みのかなと生成設定のハッシュ(API-003) */
@@ -95,33 +85,6 @@ export function parseMarkup(text: string): { prompt: string; ruby: Ruby[]; highl
     }
   }
   return { prompt, ruby, highlight };
-}
-
-/** 単漢字問題の誤答を同学年の他の漢字の読みから決定的に選ぶ(FR-006) */
-function pickSingleDistractors(
-  target: Reading,
-  ownForms: Set<string>,
-  pool: Reading[],
-  seed: string,
-): [string, string, string] {
-  const answer = fullReading(target);
-  const candidates = new Map<string, number>();
-  for (const r of pool) {
-    const form = fullReading(r);
-    if (ownForms.has(form) || ownForms.has(r.kana) || form === answer) continue;
-    // 音訓・送り仮名の有無・文字数が近いものを優先(「音の似た読み」)
-    let score = 0;
-    if (r.type === target.type) score += 4;
-    if (Boolean(r.okurigana) === Boolean(target.okurigana)) score += 4;
-    if (target.okurigana && r.okurigana === target.okurigana) score += 2;
-    score -= Math.abs([...form].length - [...answer].length) * 2;
-    if (form[0] === answer[0]) score += 1;
-    const tiebreak = parseInt(createHash("sha1").update(seed + form).digest("hex").slice(0, 6), 16) / 0xffffff;
-    candidates.set(form, Math.max(candidates.get(form) ?? -Infinity, score + tiebreak));
-  }
-  const picked = [...candidates.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([f]) => f);
-  if (picked.length < 3) throw new Error(`誤答を 3 つ作れません: ${target.readingId}`);
-  return picked as [string, string, string];
 }
 
 /** 原稿 → 配信データ(API-002)と単元情報 */
@@ -159,12 +122,10 @@ export function buildGrade(content: GradeContent): { data: GradeData; units: Uni
     u.kanji.push(k.kanji);
   }
 
-  const pool = kanji.flatMap((k) => k.readings);
   const questions: Question[] = [];
 
   content.kanji.forEach((ck, i) => {
     const entry = kanji[i];
-    const ownForms = ownReadingForms(entry);
     const findReading = (notation: string) => {
       // 送り仮名付きの表記 "のぼ(る)" か、語幹が一意なら "のぼ" でも指定できる
       const exact = entry.readings.find((x) => readingNotation(x) === notation);
@@ -173,23 +134,6 @@ export function buildGrade(content: GradeContent): { data: GradeData; units: Uni
       if (!r) throw new Error(`${ck.kanji}: 読み "${notation}" が readings にありません`);
       return r;
     };
-
-    for (const r of entry.readings) {
-      const answer = fullReading(r);
-      questions.push({
-        questionId: `${r.readingId}:single`,
-        kanji: entry.kanji,
-        readingId: r.readingId,
-        format: "single",
-        prompt: entry.kanji + (r.okurigana ?? ""),
-        ruby: [],
-        highlight: { start: 0, length: 1 },
-        hint: r.type === "on" ? "おんよみ" : "くんよみ",
-        answer,
-        distractors: pickSingleDistractors(r, ownForms, pool, r.readingId),
-        audioId: audioIdOf(answer),
-      });
-    }
 
     for (const w of ck.words ?? []) {
       const r = findReading(w.reading);

@@ -31,7 +31,7 @@ describe("出題セットの生成(FR-002)", () => {
       const unitKanji = new Set(data.kanji.filter((k) => k.unitId === "g1-u1").map((k) => k.kanji));
       expect(set.every((i) => unitKanji.has(i.question.kanji))).toBe(true);
       expect(new Set(set.map((i) => i.question.kanji)).size).toBe(set.length);
-      for (const f of ["single", "word", "sentence"]) {
+      for (const f of ["word", "sentence"]) {
         expect(set.filter((i) => i.question.format === f).length).toBeLessThanOrEqual(MAX_PER_FORMAT);
       }
     }

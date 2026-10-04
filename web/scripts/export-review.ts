@@ -19,22 +19,22 @@ for (const content of loadContents()) {
   const { data } = buildGrade(content);
   const readings = data.kanji.flatMap((k) => [
     ...k.readings.map((r) => [k.order, k.kanji, k.unitId, r.type === "on" ? "音" : "訓", fullReading(r), r.okurigana ? `${r.kana}(${r.okurigana})` : r.kana, "出題する", ...CHECK.map(() => "")]),
-    ...(k.excludedReadings ?? []).map((n) => [k.order, k.kanji, k.unitId, "", n, n, "出題しない(誤答から除外)", ...CHECK.map(() => "")]),
+    ...(k.excludedReadings ?? []).map((n) => [k.order, k.kanji, k.unitId, "", n, n, "出題しない", ...CHECK.map(() => "")]),
   ]);
   writeFileSync(
     join(outDir, `grade-${data.grade}-readings.csv`),
     csv([["順", "漢字", "単元", "音訓", "読み", "表記", "扱い", ...CHECK], ...readings]),
   );
 
-  const label = { single: "単漢字", word: "熟語", sentence: "文中" } as const;
+  const label = { word: "熟語", sentence: "文中" } as const;
   const questions = data.questions.map((q) => {
     const rubyText = q.ruby.map((r) => `${[...q.prompt].slice(r.start, r.start + r.length).join("")}=${r.kana}`).join(" ");
     const target = [...q.prompt].slice(q.highlight.start, q.highlight.start + q.highlight.length).join("");
-    return [q.questionId, q.kanji, label[q.format], q.hint ?? "", q.prompt, q.format === "sentence" ? target : "", rubyText, q.answer, ...q.distractors, ...CHECK.map(() => "")];
+    return [q.questionId, q.kanji, label[q.format], q.prompt, q.format === "sentence" ? target : "", rubyText, q.answer, ...q.distractors, ...CHECK.map(() => "")];
   });
   writeFileSync(
     join(outDir, `grade-${data.grade}-questions.csv`),
-    csv([["問題ID", "漢字", "形式", "ヒント", "問題文", "下線", "ルビ", "正解", "誤答1", "誤答2", "誤答3", ...CHECK], ...questions]),
+    csv([["問題ID", "漢字", "形式", "問題文", "下線", "ルビ", "正解", "誤答1", "誤答2", "誤答3", ...CHECK], ...questions]),
   );
   console.log(`${data.grade}年: 読み ${readings.length} 行 / 問題 ${questions.length} 行`);
 }

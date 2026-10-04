@@ -12,7 +12,7 @@ description: 漢字読み学習アプリが取得する静的データエンド�
 | ID | メソッド | パス | 概要 | 対応要件 | 認証要否 |
 | --- | --- | --- | --- | --- | --- |
 | API-001 | GET | `/data/manifest.json` | 問題データのバージョン・学年・単元・各ファイルのハッシュを取得する | FR-015, FR-019, FR-021 | 不要 |
-| API-002 | GET | `/data/grade-{grade}.{hash}.json` | 学年の漢字・読み・問題を取得する | FR-003〜FR-006, FR-021, FR-022 | 不要 |
+| API-002 | GET | `/data/grade-{grade}.{hash}.json` | 学年の漢字・読み・問題を取得する | FR-004〜FR-006, FR-021, FR-022 | 不要 |
 | API-003 | GET | `/audio/{grade}/{audioId}.m4a` | 正解の読みの音声を取得する | FR-009 | 不要 |
 
 ## API詳細
@@ -57,7 +57,7 @@ description: 漢字読み学習アプリが取得する静的データエンド�
 | questions[].questionId | string | 問題 ID(公開後は不変) |
 | questions[].kanji | string | 出題漢字 |
 | questions[].readingId | string | 正解の読み ID |
-| questions[].format | enum | single / word / sentence |
+| questions[].format | enum | word(熟語)/ sentence(文中) |
 | questions[].prompt | string | 表示文字列 |
 | questions[].ruby | 配列 | ルビ(start, length, kana) |
 | questions[].highlight | object | 下線範囲(start, length)。sentence のみ |

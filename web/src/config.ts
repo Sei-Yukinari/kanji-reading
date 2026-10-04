@@ -4,8 +4,11 @@
 /** 1 セットの問題数(FR-002) */
 export const QUESTIONS_PER_SET = 10;
 
-/** 1 形式あたりの 1 セット内の上限問題数(FR-002) */
+/** 1 形式(熟語・文中)あたりの 1 セット内の上限問題数(FR-002) */
 export const MAX_PER_FORMAT = 6;
+
+/** 1 漢字あたりの熟語問題の最少数(問題データの検証) */
+export const MIN_WORDS_PER_KANJI = 2;
 
 /** 単元の目安の漢字数(FR-015) */
 export const UNIT_SIZE = 20;
