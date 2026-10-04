@@ -148,8 +148,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     async (patch: Partial<Settings>) => {
       if (!store || !settings) return;
       const next = { ...settings, ...patch };
-      await store.saveSettings(next);
+      // 表示を先に切り替える(保存完了を待つとトグルが一瞬もとに戻って見える)
       setSettings(next);
+      await store.saveSettings(next);
     },
     [store, settings],
   );

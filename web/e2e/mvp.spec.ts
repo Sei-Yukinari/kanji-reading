@@ -104,3 +104,32 @@ test("プロフィールを追加・切替・削除できる(FR-016)", async ({ 
   await page.getByRole("dialog").getByRole("button", { name: "けす" }).click();
   await expect(page.getByRole("listitem").filter({ hasText: "あに" })).toHaveCount(0);
 });
+
+test("全学年を選べて、正解の読み上げ音声を取得する(FR-001, FR-009, FR-021)", async ({ page }) => {
+  await createFirstProfile(page);
+  await expect(page.getByText(/じゅんびちゅう/)).toHaveCount(0);
+  await page.getByRole("button", { name: "6ねん" }).click();
+  await page.getByRole("button", { name: /れんしゅう/ }).click();
+  await expect(page.getByRole("heading", { name: "6ねん れんしゅう" })).toBeVisible();
+  await page.getByRole("button", { name: /^ステージ 1(?!\d)/ }).click();
+
+  const voice = page.waitForResponse((r) => /\/audio\/6\/[0-9a-f]{12}\.m4a$/.test(new URL(r.url()).pathname) && r.ok());
+  await page.locator("[data-testid=choice][data-correct]").click();
+  await voice;
+  await expect(page.getByRole("button", { name: "よみあげ" })).toBeVisible();
+});
+
+test("よみあげを OFF にすると音声を取得しない(FR-010)", async ({ page }) => {
+  await createFirstProfile(page);
+  await page.getByRole("link", { name: "せってい" }).click();
+  await page.getByRole("switch", { name: "よみあげ" }).uncheck();
+  await page.goto("/home/");
+  const requested: string[] = [];
+  page.on("request", (r) => r.url().includes("/audio/") && requested.push(r.url()));
+  await page.getByRole("button", { name: /れんしゅう/ }).click();
+  await page.getByRole("button", { name: /ステージ 1/ }).click();
+  await page.locator("[data-testid=choice][data-correct]").click();
+  await expect(page.getByTestId("feedback")).not.toBeEmpty();
+  await expect(page.getByRole("button", { name: "よみあげ" })).toHaveCount(0);
+  expect(requested).toEqual([]);
+});
