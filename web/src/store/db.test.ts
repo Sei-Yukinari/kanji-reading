@@ -1,0 +1,95 @@
+import { IDBKeyRange, indexedDB } from "fake-indexeddb";
+import { beforeEach, describe, expect, it } from "vitest";
+import { MAX_ANSWERS_PER_PROFILE } from "../config";
+import type { AnswerRecord, Profile, SessionRecord } from "../engine/types";
+import { LearningDB, LearningStore } from "./db";
+
+let store: LearningStore;
+let n = 0;
+
+beforeEach(async () => {
+  const db = new LearningDB(`test-${n++}`, { indexedDB, IDBKeyRange });
+  await db.open();
+  store = new LearningStore(db, true);
+});
+
+const profile = (id: string, createdAt = 1): Profile => ({ id, nickname: id, icon: "🐶", createdAt, lastGrade: 1 });
+const session = (profileId: string): SessionRecord => ({
+  profileId, mode: "practice", grade: 1, unitId: "g1-u1", startedAt: 1, finishedAt: 2, total: 1, correctCount: 0,
+});
+const answer = (profileId: string, answeredAt: number): AnswerRecord => ({
+  profileId, questionId: "山:やま:single", readingId: "山:やま", kanji: "山", chosen: "かわ", correct: false, elapsedMs: 1, answeredAt,
+});
+
+describe("LearningStore", () => {
+  it("プロフィール作成時に既定の設定を作る", async () => {
+    await store.saveProfile(profile("a"));
+    expect(await store.getSettings("a")).toEqual({ profileId: "a", sound: true, voice: true });
+    expect((await store.listProfiles()).map((p) => p.id)).toEqual(["a"]);
+  });
+
+  it("セット結果を一括保存し、プロフィール削除で関連データも消える", async () => {
+    await store.saveProfile(profile("a"));
+    await store.saveProfile(profile("b", 2));
+    for (const id of ["a", "b"]) {
+      await store.saveSessionResult({
+        session: session(id),
+        answers: [answer(id, 1)],
+        outcome: {
+          progress: [{ profileId: id, readingId: "山:やま", grade: 1, correctStreak: 0, status: "learning", lastAnsweredAt: 1, lastWrongAt: 1 }],
+          reviewAdd: [{ profileId: id, questionId: "山:やま:single", grade: 1, addedAt: 1 }],
+          reviewRemove: [],
+        },
+        best: { profileId: id, grade: 1, timeMs: 1000, achievedAt: 2 },
+        medals: [{ profileId: id, medalId: "first_step", awardedAt: 2 }],
+      });
+    }
+    expect((await store.getProgress("a", 1)).get("山:やま")?.status).toBe("learning");
+    expect(await store.getReviewItems("a", 1)).toHaveLength(1);
+    expect((await store.getBest("a", 1))?.timeMs).toBe(1000);
+
+    await store.deleteProfile("a");
+    expect(await store.getProfile("a")).toBeUndefined();
+    expect(await store.getSessions("a")).toEqual([]);
+    expect(await store.getMedals("a")).toEqual([]);
+    expect((await store.getProgress("a")).size).toBe(0);
+    // 他のプロフィールは残る
+    expect(await store.getSessions("b")).toHaveLength(1);
+    expect(await store.getReviewItems("b")).toHaveLength(1);
+  });
+
+  it("ふくしゅうで正解した問題を復習対象から除去する", async () => {
+    await store.saveProfile(profile("a"));
+    await store.db.reviewItems.put({ profileId: "a", questionId: "q1", grade: 1, addedAt: 1 });
+    await store.saveSessionResult({
+      session: { ...session("a"), mode: "review" },
+      answers: [],
+      outcome: { progress: [], reviewAdd: [], reviewRemove: ["q1"] },
+      medals: [],
+    });
+    expect(await store.getReviewItems("a")).toEqual([]);
+  });
+
+  it(`ANSWER は直近 ${MAX_ANSWERS_PER_PROFILE} 件まで保持する`, async () => {
+    await store.saveProfile(profile("a"));
+    await store.db.answers.bulkAdd(Array.from({ length: MAX_ANSWERS_PER_PROFILE }, (_, i) => answer("a", i + 10)));
+    await store.saveSessionResult({
+      session: session("a"),
+      answers: [answer("a", 999_999), answer("a", 1_000_000)],
+      outcome: { progress: [], reviewAdd: [], reviewRemove: [] },
+      medals: [],
+    });
+    const rows = await store.db.answers.where("profileId").equals("a").sortBy("answeredAt");
+    expect(rows).toHaveLength(MAX_ANSWERS_PER_PROFILE);
+    expect(rows[0].answeredAt).toBe(12);
+  });
+
+  it("削除された問題の復習対象を除去する", async () => {
+    await store.db.reviewItems.bulkPut([
+      { profileId: "a", questionId: "old", grade: 1, addedAt: 1 },
+      { profileId: "a", questionId: "keep", grade: 1, addedAt: 1 },
+    ]);
+    await store.purgeRemovedQuestions(["old"]);
+    expect((await store.getReviewItems("a")).map((r) => r.questionId)).toEqual(["keep"]);
+  });
+});
