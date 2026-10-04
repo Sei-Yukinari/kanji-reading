@@ -32,24 +32,23 @@
   --shadow-product: 0 5px 30px 3px rgba(0, 0, 0, 0.22);
 }
 
-/* ダークモード: OS の外観設定に追従。値は DESIGN.md(primary-on-dark 等)と iOS のダーク配色 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: #2997ff;
-    --color-primary-fill: #0071e3;
-    --color-primary-focus: #2997ff;
-    --color-ink: #f5f5f7;
-    --color-ink-muted: #98989d;
-    --color-canvas: #1c1c1e;
-    --color-parchment: #000000;
-    --color-hairline: #38383a;
-    --color-correct: #30d158;
-    --color-wrong: #ff453a;
-  }
+html {
+  color-scheme: light;
 }
 
-html {
-  color-scheme: light dark;
+/* ダークモード: 設定画面で選んだときだけ(src/ui/theme.ts)。値は DESIGN.md(primary-on-dark 等)と iOS のダーク配色 */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-primary: #2997ff;
+  --color-primary-fill: #0071e3;
+  --color-primary-focus: #2997ff;
+  --color-ink: #f5f5f7;
+  --color-ink-muted: #98989d;
+  --color-canvas: #1c1c1e;
+  --color-parchment: #000000;
+  --color-hairline: #38383a;
+  --color-correct: #30d158;
+  --color-wrong: #ff453a;
 }
 
 body {

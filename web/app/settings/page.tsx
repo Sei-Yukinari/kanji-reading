@@ -4,18 +4,21 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { stopPrefetchVoices } from "@/audio/prefetch";
 import { VOICE } from "@/audio/voice-config";
 import type { Profile } from "@/engine/types";
 import { ConfirmDialog } from "@/ui/ConfirmDialog";
 import { Loading, Screen } from "@/ui/Screen";
+import { getTheme, setTheme } from "@/ui/theme";
 import { useRequireProfile } from "@/ui/useRequireProfile";
 
 export default function SettingsPage() {
   const app = useRequireProfile();
   const router = useRouter();
   const [deleting, setDeleting] = useState<Profile | null>(null);
+  const [dark, setDark] = useState(false);
+  useEffect(() => setDark(getTheme() === "dark"), []);
   if (!app || !app.settings || !app.profile) return <Loading />;
   const { settings, updateSettings, profiles, profile, store, refreshProfiles, setEditingProfileId, selectProfile } = app;
 
@@ -48,6 +51,18 @@ export default function SettingsPage() {
           }}
         />
         <p className="px-4 pb-3 text-[15px] text-ink-muted">おとが でないときは、マナーモードや おとの おおきさを かくにんしてね</p>
+      </Section>
+
+      <Section title="がめん">
+        <Toggle
+          label="くらい がめん"
+          checked={dark}
+          onChange={(v) => {
+            setTheme(v ? "dark" : "light");
+            setDark(v);
+          }}
+        />
+        <p className="px-4 pb-3 text-[15px] text-ink-muted">よるや くらい ところで まぶしいときに つかってね</p>
       </Section>
 
       <Section title="プロフィール">
