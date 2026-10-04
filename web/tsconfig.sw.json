@@ -1,0 +1,11 @@
+{
+  "// ": "Service Worker(src/sw/sw.ts)は DOM ではなく WebWorker の型で検査する。npm run typecheck から呼ばれる",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["webworker", "esnext"],
+    "incremental": false,
+    "plugins": []
+  },
+  "include": ["src/sw/sw.ts"],
+  "exclude": ["node_modules", "out"]
+}

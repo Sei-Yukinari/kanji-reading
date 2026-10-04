@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* DESIGN.md + docs/design/01-ui-ux.mdx のカラートークン */
+@theme {
+  --color-primary: #0066cc;
+  --color-primary-focus: #0071e3;
+  --color-ink: #1d1d1f;
+  --color-ink-muted: #7a7a7a;
+  --color-canvas: #ffffff;
+  --color-parchment: #f5f5f7;
+  --color-hairline: #e0e0e0;
+  --color-correct: #248a3d;
+  --color-wrong: #d70015;
+
+  --radius-lg: 18px;
+  --radius-pill: 9999px;
+
+  --font-sans: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  /* 出題漢字は教科書体系(T-007)。Klee One 同梱までは OS の教科書体へフォールバック */
+  --font-kanji: "Klee One", "UD Digi Kyokasho N-R", "UD デジタル 教科書体 N-R", "YuKyokasho", "Hiragino Mincho ProN", serif;
+
+  --shadow-product: 0 5px 30px 3px rgba(0, 0, 0, 0.22);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
+.press {
+  transition: transform 120ms ease;
+}
+.press:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.fade-in {
+  animation: fade-in 200ms ease;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.pop-in {
+  animation: pop-in 400ms ease;
+}
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.6); }
+  70% { transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

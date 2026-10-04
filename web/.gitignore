@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+test-results/
+playwright-report/
+# 生成物(npm run data:build で再生成)
+public/data/
+public/sw.js

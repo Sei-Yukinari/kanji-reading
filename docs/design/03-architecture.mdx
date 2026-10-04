@@ -24,20 +24,25 @@ description: 漢字読み学習アプリのシステム構成・インフラ設�
 | 設定定数 | 問題数・表示時間・習得基準等の仮置きパラメータ | FR-002, FR-007, FR-011, FR-014 |
 | データ生成・検証スクリプト(開発時のみ) | 原稿から JSON 生成、網羅性・整合性チェック、VOICEVOX で音声生成、フォントのサブセット化 | FR-021, NFR-012, NFR-013 |
 
-### ディレクトリ構成(案)
+### ディレクトリ構成
 
-| パス | 内容 |
+アプリ本体はリポジトリ直下のドキュメントサイト(Blume)と分け、独立した Next.js プロジェクトとして `web/` 配下に置く。Vercel の Root Directory も `web` とする。
+
+| パス(`web/` 配下) | 内容 |
 | --- | --- |
-| `app/` | 画面(App Router) |
-| `src/engine/` | 出題エンジン |
+| `app/` | 画面(App Router。SCR-001〜SCR-010) |
+| `src/engine/` | 出題エンジン(UI 非依存) |
 | `src/store/` | 学習データストア(Dexie) |
+| `src/data/` | 問題データの型・原稿変換・検証・ローダー |
 | `src/audio/` | サウンドプレイヤー |
-| `src/sw/` | Service Worker(Serwist) |
-| `content/` | 問題データ原稿(人が編集する形式。例: YAML/CSV) |
-| `public/data/` | 生成された問題データ JSON |
-| `public/audio/` | 生成された音声ファイル |
-| `public/fonts/` | サブセット化した Klee One |
-| `scripts/` | データ生成・検証・音声生成・フォントサブセット化 |
+| `src/sw/` | Service Worker(Serwist)・端末判定 |
+| `src/config.ts` | 設定定数(仮置きの設計パラメータ) |
+| `content/` | 問題データ原稿(YAML)・配当表・公開済み問題 ID のロック |
+| `public/data/` | 生成された問題データ JSON(ビルド時に生成。コミットしない) |
+| `public/audio/` | 生成された音声ファイル(FR-009 実装時) |
+| `public/fonts/` | サブセット化した Klee One(T-007 実装時) |
+| `scripts/` | データ生成・検証・Service Worker 生成・アイコン生成(音声生成・フォントサブセット化は後続) |
+| `e2e/` | E2E テスト(Playwright) |
 
 ## データモデル
 
