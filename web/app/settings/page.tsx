@@ -5,6 +5,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { stopPrefetchVoices } from "@/audio/prefetch";
+import { VOICE } from "@/audio/voice-config";
 import type { Profile } from "@/engine/types";
 import { ConfirmDialog } from "@/ui/ConfirmDialog";
 import { Loading, Screen } from "@/ui/Screen";
@@ -37,7 +39,14 @@ export default function SettingsPage() {
     <Screen title="せってい" back="/home/">
       <Section title="おと">
         <Toggle label="こうかおん" checked={settings.sound} onChange={(v) => void updateSettings({ sound: v })} />
-        <Toggle label="よみあげ(じゅんびちゅう)" checked={settings.voice} disabled onChange={(v) => void updateSettings({ voice: v })} />
+        <Toggle
+          label="よみあげ"
+          checked={settings.voice}
+          onChange={(v) => {
+            if (!v) stopPrefetchVoices();
+            void updateSettings({ voice: v });
+          }}
+        />
         <p className="px-4 pb-3 text-[15px] text-ink-muted">おとが でないときは、マナーモードや おとの おおきさを かくにんしてね</p>
       </Section>
 
@@ -87,8 +96,16 @@ export default function SettingsPage() {
       <Section title="クレジット・ライセンス">
         <ul className="space-y-1 px-4 py-3 text-[14px] leading-relaxed text-ink-muted">
           <li>もんだいの はんい: 小学校学習指導要領(平成29年告示)学年別漢字配当表</li>
+          <li>よみあげの こえ: {VOICE.credit}</li>
+          <li>
+            もんだいの もじ: Klee One(SIL Open Font License 1.1 /{" "}
+            <a className="text-primary underline" href="/fonts/KleeOne-OFL.txt">
+              ライセンス
+            </a>
+            )
+          </li>
           <li>Next.js / React(MIT)、Tailwind CSS(MIT)、Dexie.js(Apache-2.0)、Serwist(MIT)、fake-indexeddb(Apache-2.0)</li>
-          <li>がめんの デザインは あたらしく つくりました。こうかおんは アプリの なかで つくっています</li>
+          <li>こうかおんは アプリの なかで つくっています</li>
         </ul>
       </Section>
 

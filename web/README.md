@@ -49,6 +49,44 @@ npm run typecheck
    - 公開済みの問題を削除する場合は `content/removed-question-ids.yaml` に ID を列挙する
 4. 単漢字問題の誤答は、同学年の他の漢字の読みから自動生成される。出題しない読み(例: 木 の「こ」)が誤答に混ざらないよう、`exclude` に常用漢字表の残りの音訓を列挙する
 
+5. 読み上げ音声を生成する(下記)。本番ビルド(`npm run build`)は音声が欠けているとエラーになる
+6. 文字が増えた場合はフォントを再サブセット化する(下記)
+
+作成中の原稿は `npx tsx scripts/check-grade.ts N` で 1 学年だけ検証できる。
+
+### 人手チェック(NFR-012)
+
+`npx tsx scripts/export-review.ts` で `review/`(コミットしない)に学年ごとの CSV を書き出す。
+
+- `grade-N-readings.csv`: 漢字ごとの読み(出題する / 出題しない)
+- `grade-N-questions.csv`: 全問題(問題文・下線・ルビ・正解・誤答)
+
+どちらにも 1 回目・2 回目・指摘のチェック欄がある。指摘は `content/grade-N.yaml` に反映する。
+
+### 読み上げ音声(FR-009)
+
+VOICEVOX で正解の読みを事前生成し、`public/audio/{学年}/{audioId}.m4a` にコミットする。キャラクター・話速は `src/audio/voice-config.ts`(ずんだもんを仮採用。顧客の了承待ち)。
+
+```bash
+docker run -d --name voicevox -p 50021:50021 voicevox/voicevox_engine:cpu-latest
+npx tsx scripts/build-audio.ts            # 全学年(既存の音声はスキップ。参照されなくなった音声は削除)
+npx tsx scripts/build-audio.ts --grade 3  # 1 学年だけ
+```
+
+- ffmpeg が必要(AAC モノラル 32kbps に変換)
+- VOICEVOX はひらがな 1 語でも「は」を「わ」と読むなど解析がずれることがある。生成時に解析結果を読みと照合し、ずれた場合はカナ指定で読みを固定する(固定した語は実行ログに出る)
+- 音声は全件を人が聴いて確認する(NFR-012)
+
+### フォント(T-007)
+
+出題用の Klee One SemiBold を、問題データで使う文字だけにサブセット化して `public/fonts/` に置く。
+
+```bash
+python3 -m pip install fonttools brotli
+curl -LO https://github.com/google/fonts/raw/main/ofl/kleeone/KleeOne-SemiBold.ttf
+npx tsx scripts/build-font.ts --src KleeOne-SemiBold.ttf
+```
+
 新しい学年を追加するときは `content/official-kanji.yaml` に配当漢字を追記し、`content/grade-N.yaml` を作成する。
 
 ## デプロイ(Vercel)
@@ -56,10 +94,8 @@ npm run typecheck
 - Vercel プロジェクトの Root Directory を `web` にする。設定は `vercel.json`(ビルドコマンド・出力先・セキュリティ/キャッシュヘッダー)
 - リポジトリ直下の `vercel.json` / `middleware.ts` はドキュメントサイト用で、アプリとは別プロジェクト
 
-## MVP の範囲
+## 未対応・確認待ち
 
-Epic #1 を参照。MVP に含めないもの:
-
-- 読み上げ音声(FR-009。VOICEVOX のキャラクター選定後に実装。設定画面のトグルは「じゅんびちゅう」)
-- 2〜6 年生の問題データと、問題データの人手チェック(NFR-012)。1 年生のデータ(読み・exclude・熟語・例文・誤答)も人手チェック前
-- Klee One のサブセット同梱(T-007)。現在は OS の教科書体・明朝体へフォールバック
+- 問題データ(全学年。読み・exclude・熟語・例文・誤答)と読み上げ音声は、すべて人手チェック前の下書き(NFR-012)
+- 読み上げ音声のキャラクター(ずんだもん)は仮採用。顧客の了承待ち
+- 本番デプロイ(Vercel プロジェクト・独自ドメイン)は未実施

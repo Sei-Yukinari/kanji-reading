@@ -4,6 +4,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { voiceUrl } from "@/audio/sound";
 import { MEDALS } from "@/engine/medals";
 import { Button } from "@/ui/Button";
 import { QuestionText } from "@/ui/QuestionText";
@@ -84,11 +85,22 @@ export default function ResultPage() {
           <h2 className="mb-3 text-[20px] font-bold">まちがえた もんだい</h2>
           <ul className="grid gap-2 sm:grid-cols-2">
             {wrong.map((q) => (
-              <li key={q.questionId} className="flex items-center justify-between gap-3 rounded-lg bg-canvas px-4 py-3 ring-1 ring-hairline">
-                <span className="font-kanji min-w-0 truncate text-[26px]">
-                  <QuestionText prompt={q.prompt} ruby={q.ruby} highlight={q.highlight} underline={q.format === "sentence"} />
-                </span>
-                <span className="shrink-0 text-[20px] font-bold text-correct">{q.answer}</span>
+              <li key={q.questionId}>
+                <button
+                  type="button"
+                  aria-label={`${q.answer} を よみあげ`}
+                  disabled={!app.settings?.voice}
+                  onClick={() => void app.sound.playVoice(voiceUrl(config.grade, q.audioId))}
+                  className="press flex w-full items-center justify-between gap-3 rounded-lg bg-canvas px-4 py-3 text-left ring-1 ring-hairline disabled:active:scale-100"
+                >
+                  <span className="font-kanji min-w-0 truncate text-[26px]">
+                    <QuestionText prompt={q.prompt} ruby={q.ruby} highlight={q.highlight} underline={q.format === "sentence"} />
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1 text-[20px] font-bold text-correct">
+                    {q.answer}
+                    {app.settings?.voice && <span aria-hidden>🔈</span>}
+                  </span>
+                </button>
               </li>
             ))}
           </ul>

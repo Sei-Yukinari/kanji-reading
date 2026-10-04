@@ -39,9 +39,9 @@ description: 漢字読み学習アプリのシステム構成・インフラ設�
 | `src/config.ts` | 設定定数(仮置きの設計パラメータ) |
 | `content/` | 問題データ原稿(YAML)・配当表・公開済み問題 ID のロック |
 | `public/data/` | 生成された問題データ JSON(ビルド時に生成。コミットしない) |
-| `public/audio/` | 生成された音声ファイル(FR-009 実装時) |
-| `public/fonts/` | サブセット化した Klee One(T-007 実装時) |
-| `scripts/` | データ生成・検証・Service Worker 生成・アイコン生成(音声生成・フォントサブセット化は後続) |
+| `public/audio/` | 生成された読み上げ音声(`scripts/build-audio.ts` で VOICEVOX から生成してコミットする) |
+| `public/fonts/` | サブセット化した Klee One とライセンス文(`scripts/build-font.ts` で生成してコミットする) |
+| `scripts/` | データ生成・検証・音声生成・フォントサブセット化・Service Worker 生成・アイコン生成 |
 | `e2e/` | E2E テスト(Playwright) |
 
 ## データモデル

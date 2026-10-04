@@ -2,6 +2,7 @@
 // ビルド時のみ使用する(scripts/build-data.ts と検証テスト)。
 
 import { createHash } from "node:crypto";
+import { VOICE } from "../audio/voice-config";
 import { UNIT_SIZE } from "../config";
 import type { GradeData, KanjiEntry, Question, Reading, Ruby, UnitInfo } from "./types";
 
@@ -69,8 +70,10 @@ export function ownReadingForms(k: Pick<KanjiEntry, "readings" | "excludedReadin
   return new Set(forms);
 }
 
+/** 音声 ID = 読みのかなと生成設定のハッシュ(API-003) */
 export function audioIdOf(kana: string): string {
-  return createHash("sha1").update(`v1:${kana}`).digest("hex").slice(0, 12);
+  const { engine, speaker, speedScale } = VOICE;
+  return createHash("sha1").update(JSON.stringify([engine, speaker, speedScale, kana])).digest("hex").slice(0, 12);
 }
 
 /** "{森|もり}の [山]" のような原稿表記から、表示文字列・ルビ・下線範囲を取り出す */
