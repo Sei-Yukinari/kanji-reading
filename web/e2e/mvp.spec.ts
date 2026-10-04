@@ -15,7 +15,11 @@ test("初回起動 → プロフィール作成 → れんしゅう 10 問 → �
   await expect(page.getByText("はじめの いっぽ")).toBeVisible();
   await expect(page.getByText("まんてん")).toBeVisible();
 
-  await page.getByRole("button", { name: "ホームへ" }).click();
+  // 習得前でも単元選択に学習中の数が出る
+  await page.goto("/units/");
+  await expect(page.getByRole("button", { name: /ステージ 1/ })).toContainText("れんしゅうちゅう 10");
+
+  await page.goto("/home/");
   await page.getByRole("link", { name: /おぼえた かんじ/ }).click();
   await expect(page.getByTestId("mastery-total")).toContainText("0 / 80");
   await expect(page.getByLabel(/れんしゅうちゅう$/)).toHaveCount(10);

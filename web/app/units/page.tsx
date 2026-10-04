@@ -9,6 +9,10 @@ import { masterySummary, unitKanji, type MasterySummary } from "@/engine/progres
 import { Loading, Screen } from "@/ui/Screen";
 import { useRequireProfile } from "@/ui/useRequireProfile";
 
+function percent(n: number, total: number): number {
+  return total ? (n / total) * 100 : 0;
+}
+
 export default function UnitsPage() {
   const app = useRequireProfile();
   const router = useRouter();
@@ -53,7 +57,7 @@ export default function UnitsPage() {
     <Screen title={`${grade}ねん れんしゅう`} back="/home/">
       {error && <p className="rounded-lg bg-canvas p-4 text-center text-wrong">{error}</p>}
       {!rows && !error && <p className="text-center text-ink-muted">よみこみちゅう…</p>}
-      <ul className="grid gap-4 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {rows?.map((r) => (
           <li key={r.unitId}>
             <button
@@ -66,13 +70,18 @@ export default function UnitsPage() {
             >
               <span className="flex items-center justify-between">
                 <span className="text-[22px] font-bold">{r.title}</span>
-                <span className="text-[15px] text-ink-muted">
-                  おぼえた {r.summary.mastered}/{r.summary.total}
+                <span className="flex flex-col items-end text-[15px] text-ink-muted">
+                  <span>
+                    おぼえた {r.summary.mastered}/{r.summary.total}
+                  </span>
+                  {r.summary.learning > 0 && <span className="text-[13px]">れんしゅうちゅう {r.summary.learning}</span>}
                 </span>
               </span>
               <span className="font-kanji truncate text-[28px] tracking-wider">{r.kanji.join("")}</span>
-              <span className="h-2 overflow-hidden rounded-pill bg-parchment" aria-hidden>
-                <span className="block h-full rounded-pill bg-primary" style={{ width: `${Math.round(r.summary.rate * 100)}%` }} />
+              {/* 習得済みに加えて学習中も薄い色で重ね、遊ぶたびに進んでいることを見せる */}
+              <span className="flex h-2 overflow-hidden rounded-pill bg-parchment" aria-hidden>
+                <span className="block h-full bg-primary" style={{ width: `${percent(r.summary.mastered, r.summary.total)}%` }} />
+                <span className="block h-full bg-primary/30" style={{ width: `${percent(r.summary.learning, r.summary.total)}%` }} />
               </span>
             </button>
           </li>
