@@ -1,7 +1,7 @@
 "use client";
 
-// 三角視算表の全体図(FR-026, FR-028)。36 組をいつも同じ位置に置く:
-// 行 = 小さいほうの数(2〜9)、列 = 大きいほうの数(2〜9)の階段状。1 の段は下に別の列で 9 マス。
+// 三角視算表の全体図(FR-026, FR-028)。どんぐり倶楽部の三角視算表と同じく、36 組を 6 列 × 6 行に
+// 2×2, 2×3, …, 2×9, 3×3, … の順で詰めて並べ、いつも同じ位置に置く。1 の段は下に別に 9 マス。
 
 import { DANS, TRIANGLES, factsOfOneCell, factsOfTriangle, type KukuFact } from "../data";
 import { cellStatus, type CellStatus, type KukuProgress } from "../engine";
@@ -31,16 +31,16 @@ export function TriangleChart({
   showLegend?: boolean;
 }) {
   const status = (key: string): CellStatus => cellStatus(factsOfCell(key), progress, reviewIds);
-  const cell = (k: string, top: number, left: number, right: number, style?: React.CSSProperties) => {
+  const cell = (k: string, top: number, left: number, right: number) => {
     const st = status(k);
     const label = `${left} かける ${right} は ${top}。${STATUS_LABEL[st]}`;
     const tri = <Triangle top={top} left={left} right={right} status={st} highlight={highlight === k} className="block w-full" />;
     return onSelect ? (
-      <button key={k} type="button" style={style} className="press min-w-0" aria-label={label} data-cell={k} data-status={st} onClick={() => onSelect(k)}>
+      <button key={k} type="button" className="press min-w-0" aria-label={label} data-cell={k} data-status={st} onClick={() => onSelect(k)}>
         {tri}
       </button>
     ) : (
-      <div key={k} style={style} className="min-w-0" role="img" aria-label={label} data-cell={k} data-status={st}>
+      <div key={k} className="min-w-0" role="img" aria-label={label} data-cell={k} data-status={st}>
         {tri}
       </div>
     );
@@ -48,12 +48,10 @@ export function TriangleChart({
 
   return (
     <div className="flex flex-col gap-3" data-testid="triangle-chart">
-      <div className="grid grid-cols-8 gap-x-0.5 gap-y-1">
-        {TRIANGLES.map((t) => cell(t.id, t.product, t.small, t.large, { gridRow: t.small - 1, gridColumn: t.large - 1 }))}
-      </div>
+      <div className="grid grid-cols-6 gap-0.5">{TRIANGLES.map((t) => cell(t.id, t.product, t.small, t.large))}</div>
       <div>
         <p className="mb-1 text-[13px] font-bold text-ink-muted">1のだん</p>
-        <div className="grid grid-cols-9 gap-0.5">
+        <div className="grid grid-cols-6 gap-0.5">
           {DANS.map((n) => cell(`1-${n}`, n, 1, n))}
         </div>
       </div>
