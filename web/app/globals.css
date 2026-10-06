@@ -93,6 +93,15 @@ button {
   100% { opacity: 1; transform: scale(1); }
 }
 
+/* 九九の全体図で、回答した式・再生中の式の三角を強調する(FR-028) */
+.kuku-glow {
+  animation: kuku-glow 1.2s ease-in-out infinite;
+}
+@keyframes kuku-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
