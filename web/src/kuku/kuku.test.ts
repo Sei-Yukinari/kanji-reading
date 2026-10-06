@@ -3,6 +3,7 @@ import { KUKU_MASTERY_STREAK, KUKU_QUESTIONS_PER_SET, KUKU_SLOW_MS } from "../co
 import { seededRng } from "../engine/random";
 import { DANS, FACT_BY_ID, GORO, KUKU_FACTS, TRIANGLES, factsOfOneCell, factsOfTriangle } from "./data";
 import {
+  CHOICE_COUNT,
   buildKukuSet,
   cellStatus,
   computeKukuOutcome,
@@ -24,7 +25,7 @@ const ans = (id: string, correct: boolean, slow = false, at = 1): KukuAnswer => 
   given: correct ? fact(id).product : 0,
   correct,
   slow,
-  method: "keypad",
+  method: "choice",
   elapsedMs: 1000,
   answeredAt: at,
 });
@@ -108,6 +109,38 @@ describe("九九の出題セット(FR-027)", () => {
     expect(() => makeQuestion(fact("1x4"), "triangle", "top")).toThrow();
   });
 
+  it("4 択: すべての式・隠し方で、正解 1 つ + 重ならない誤答 3 つ。誤答は 1 以上(FR-030)", () => {
+    const rng = seededRng(11);
+    for (const f of KUKU_FACTS) {
+      for (const hidden of ["top", "left", "right"] as const) {
+        for (let k = 0; k < 5; k++) {
+          const q = makeQuestion(f, "expr", hidden, rng);
+          expect(q.choices).toHaveLength(CHOICE_COUNT);
+          expect(new Set(q.choices).size).toBe(CHOICE_COUNT);
+          expect(q.choices.filter((c) => c === q.answer)).toHaveLength(1);
+          expect(q.choices.every((c) => Number.isInteger(c) && c >= 1)).toBe(true);
+          // かける数を答える問題の誤答は 1〜9
+          if (hidden !== "top") expect(q.choices.every((c) => c <= 9)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("積を答える問題の誤答は、九九表で隣り合う積を優先する(7×8 → 48・49・63・64)", () => {
+    const q = makeQuestion(fact("7x8"), "expr", "top", seededRng(1));
+    const neighbors = new Set([48, 49, 63, 64]);
+    expect(q.choices.filter((c) => c !== 56).every((c) => neighbors.has(c))).toBe(true);
+  });
+
+  it("正解の位置は 4 つの選択肢に散らばる", () => {
+    const rng = seededRng(5);
+    const positions = new Set(Array.from({ length: 50 }, () => {
+      const q = makeQuestion(fact("6x7"), "expr", "top", rng);
+      return q.choices.indexOf(q.answer);
+    }));
+    expect(positions).toEqual(new Set([0, 1, 2, 3]));
+  });
+
   it("バラバラでは 3 形式がすべて出る", () => {
     const rng = seededRng(7);
     const kinds = new Set(Array.from({ length: 200 }, () => {
@@ -125,9 +158,9 @@ describe("九九の出題セット(FR-027)", () => {
 
 describe("九九の復習と習得(FR-033)", () => {
   it("遅い正解の基準は回答方法ごと", () => {
-    expect(isSlow(KUKU_SLOW_MS.keypad, "keypad")).toBe(false);
-    expect(isSlow(KUKU_SLOW_MS.keypad + 1, "keypad")).toBe(true);
-    expect(isSlow(KUKU_SLOW_MS.keypad + 1, "voice")).toBe(false);
+    expect(isSlow(KUKU_SLOW_MS.choice, "choice")).toBe(false);
+    expect(isSlow(KUKU_SLOW_MS.choice + 1, "choice")).toBe(true);
+    expect(isSlow(KUKU_SLOW_MS.choice + 1, "voice")).toBe(false);
   });
 
   it("誤答と遅い正解は復習の対象。理由を残す", () => {

@@ -1,4 +1,4 @@
-// 九九の出題エンジン(FR-027, FR-033)。出題セットの生成・正誤と速さの判定・習得状況と復習対象の更新
+// 九九の出題エンジン(FR-027, FR-030, FR-033)。出題セットの生成・4 択の選択肢・正誤と速さの判定・習得状況と復習対象の更新
 
 import { KUKU_MASTERY_STREAK, KUKU_QUESTIONS_PER_SET, KUKU_SLOW_MS, TIME_ATTACK_PENALTY_MS } from "../config";
 import type { Mode } from "../engine/types";
@@ -19,7 +19,11 @@ export interface KukuQuestion {
   format: KukuFormat;
   hidden: KukuHidden;
   answer: number;
+  /** 4 択の選択肢(正解 1 + 誤答 3、シャッフル済み) */
+  choices: number[];
 }
+
+export const CHOICE_COUNT = 4;
 
 export type KukuOrder = "sequential" | "random";
 
@@ -30,7 +34,7 @@ export interface KukuConfig {
   order: KukuOrder;
 }
 
-export type AnswerMethod = "keypad" | "voice";
+export type AnswerMethod = "choice" | "voice";
 
 export interface KukuAnswer {
   profileId: string;
@@ -77,9 +81,36 @@ export function answerOf(f: KukuFact, hidden: KukuHidden): number {
   return hidden === "top" ? f.product : hidden === "left" ? f.a : f.b;
 }
 
-export function makeQuestion(f: KukuFact, format: KukuFormat, hidden: KukuHidden): KukuQuestion {
+/**
+ * 誤答 3 つ(FR-030)。紛らわしいものを優先する:
+ * - 積を答える問題: 九九表で隣り合う積(a×(b±1)・(a±1)×b)→ 積 ±1・±10
+ * - かける数を答える問題: 正解に近い 1〜9 の数
+ */
+export function distractorsOf(f: KukuFact, hidden: KukuHidden, rng: Rng): number[] {
+  const answer = answerOf(f, hidden);
+  const pick = (groups: number[][]) => {
+    const out: number[] = [];
+    for (const g of groups) {
+      for (const n of shuffle(g, rng)) {
+        if (out.length >= CHOICE_COUNT - 1) return out;
+        if (n > 0 && n !== answer && !out.includes(n)) out.push(n);
+      }
+    }
+    return out;
+  };
+  if (hidden === "top") {
+    const { a, b, product } = f;
+    const neighbors = [[a - 1, b], [a + 1, b], [a, b - 1], [a, b + 1]].filter(([x, y]) => x >= 1 && x <= 9 && y >= 1 && y <= 9).map(([x, y]) => x * y);
+    return pick([neighbors, [product - 1, product + 1, product - 10, product + 10], [product + 2, product + 3, product + 5]]);
+  }
+  const near = (d: number) => [answer - d, answer + d].filter((n) => n >= 1 && n <= 9);
+  return pick([near(1), near(2), near(3), near(4), [1, 2, 3, 4, 5, 6, 7, 8, 9]]);
+}
+
+export function makeQuestion(f: KukuFact, format: KukuFormat, hidden: KukuHidden, rng: Rng = Math.random): KukuQuestion {
   if (format === "triangle" && !f.triangleId) throw new Error(`1 の段は三角で出題できません: ${f.id}`);
-  return { factId: f.id, format, hidden, answer: answerOf(f, hidden) };
+  const answer = answerOf(f, hidden);
+  return { factId: f.id, format, hidden, answer, choices: shuffle([answer, ...distractorsOf(f, hidden, rng)], rng) };
 }
 
 /** バラバラ出題の形式: 式 4 割・三角 3.5 割・積から因数 2.5 割(三角にできない 1 の段は式) */
@@ -88,10 +119,10 @@ export function randomQuestion(f: KukuFact, rng: Rng): KukuQuestion {
   const side = (): KukuHidden => (rng() < 0.5 ? "left" : "right");
   if (r < 0.35 && f.triangleId) {
     const h = rng();
-    return makeQuestion(f, "triangle", h < 0.5 ? "top" : side());
+    return makeQuestion(f, "triangle", h < 0.5 ? "top" : side(), rng);
   }
-  if (r >= 0.75) return makeQuestion(f, "expr", side());
-  return makeQuestion(f, "expr", "top");
+  if (r >= 0.75) return makeQuestion(f, "expr", side(), rng);
+  return makeQuestion(f, "expr", "top", rng);
 }
 
 /** 段の組み合わせの記録キー(自己ベスト用)。例: "1-9"(ぜんぶ)/ "3,4" */
@@ -117,7 +148,7 @@ export function buildKukuSet({ config, progress, reviewItems, rng = Math.random 
   const facts = KUKU_FACTS.filter((f) => dans.has(f.a));
   if (config.mode === "practice" && config.order === "sequential") {
     // 暗唱の順(段の小さい順、かける数の小さい順)
-    return facts.map((f) => makeQuestion(f, "expr", "top"));
+    return facts.map((f) => makeQuestion(f, "expr", "top", rng));
   }
   let picked = shuffle(facts, rng);
   if (config.mode === "practice") {

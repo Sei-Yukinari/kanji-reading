@@ -50,7 +50,7 @@ export type Grade = (typeof GRADES)[number];
 export const KUKU_QUESTIONS_PER_SET = 10;
 
 /** これを超えた正解は「遅い正解」として復習の対象にする(ミリ秒)(FR-033) */
-export const KUKU_SLOW_MS = { keypad: 5000, voice: 8000 } as const;
+export const KUKU_SLOW_MS = { choice: 5000, voice: 8000 } as const;
 
 /** 九九の習得とみなす、速い正解の連続数(FR-033) */
 export const KUKU_MASTERY_STREAK = 3;

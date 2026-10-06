@@ -20,7 +20,6 @@ import {
   type KukuQuestion,
 } from "@/kuku/engine";
 import { NumberListener, pickSpokenAnswer, speechInputAvailable } from "@/kuku/speech";
-import { NumberPad, MAX_DIGITS } from "@/kuku/ui/NumberPad";
 import { Triangle } from "@/kuku/ui/Triangle";
 import { TriangleChart, cellKeyOf } from "@/kuku/ui/TriangleChart";
 import { ConfirmDialog } from "@/ui/ConfirmDialog";
@@ -70,7 +69,6 @@ function Quiz({ config }: { config: KukuConfig }) {
   const [error, setError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<KukuQuestion[]>([]);
   const [index, setIndex] = useState(0);
-  const [input, setInput] = useState("");
   const [given, setGiven] = useState<number | null>(null);
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [confirmQuit, setConfirmQuit] = useState(false);
@@ -151,7 +149,7 @@ function Quiz({ config }: { config: KukuConfig }) {
       (alts) => onSpokenRef.current(alts),
       () => {
         setVoiceInput(false);
-        setVoiceNote("こえが つかえないので、すうじで こたえてね");
+        setVoiceNote("こえが つかえないので、えらんで こたえてね");
       },
       setListening,
     );
@@ -227,7 +225,6 @@ function Quiz({ config }: { config: KukuConfig }) {
     timerRef.current = null;
     if (voiceTimerRef.current) clearTimeout(voiceTimerRef.current);
     sound.stopVoice();
-    setInput("");
     setGiven(null);
     setVoiceNote(null);
     if (index + 1 >= questions.length) {
@@ -246,7 +243,7 @@ function Quiz({ config }: { config: KukuConfig }) {
     [],
   );
 
-  // --- 回答(FR-030, FR-031, FR-033) ---
+  // --- 回答(4 択: FR-030、音声: FR-031、速さの判定: FR-033) ---
   const submit = (value: number, method: AnswerMethod) => {
     if (phase !== "question" || given !== null || paused || !profile) return;
     listenerRef.current?.stop();
@@ -276,21 +273,8 @@ function Quiz({ config }: { config: KukuConfig }) {
       setVoiceNote(`「${alts[0] ?? ""}」? もういちど いってね`);
       return;
     }
-    setInput(String(n));
     submit(n, "voice");
   };
-
-  // パソコンのキーボードでも答えられるようにする
-  useEffect(() => {
-    if (phase !== "question") return;
-    const onKey = (e: KeyboardEvent) => {
-      if (/^[0-9]$/.test(e.key)) setInput((v) => (v.length >= MAX_DIGITS ? v : v + e.key));
-      else if (e.key === "Backspace") setInput((v) => v.slice(0, -1));
-      else if (e.key === "Enter") document.querySelector<HTMLButtonElement>("[data-testid=submit]")?.click();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [phase]);
 
   if (error) {
     return (
@@ -334,7 +318,7 @@ function Quiz({ config }: { config: KukuConfig }) {
       }`}
       data-testid="slot"
     >
-      {answered ? q.answer : input || "?"}
+      {answered ? q.answer : "?"}
     </span>
   );
 
@@ -388,13 +372,8 @@ function Quiz({ config }: { config: KukuConfig }) {
         <section className="flex flex-1 flex-col items-center justify-center gap-3 rounded-lg bg-canvas p-5 ring-1 ring-hairline" data-answer={q.answer} data-format={q.format}>
           <span className="text-[17px] font-bold text-ink-muted">{instruction}</span>
           {q.format === "triangle" ? (
-            <div className="relative w-52 sm:w-64" data-testid="prompt">
+            <div className="w-52 sm:w-64" data-testid="prompt">
               <Triangle top={f.product} left={f.a} right={f.b} hidden={answered ? undefined : q.hidden} status={answered ? (correct ? "mastered" : "review") : "learning"} className="block w-full" />
-              {!answered && input && (
-                <span className="absolute inset-x-0 bottom-0 text-center text-[17px] font-bold text-primary" data-testid="slot">
-                  ? = {input}
-                </span>
-              )}
             </div>
           ) : (
             <ExprPrompt q={q} slot={slot} />
@@ -441,8 +420,23 @@ function Quiz({ config }: { config: KukuConfig }) {
                   🎤 {voiceInput ? (listening ? "きいてるよ… こたえを いってね" : "こえで こたえる: オン") : "こえで こたえる"}
                 </button>
               )}
-              <div onClick={(e) => e.stopPropagation()}>
-                <NumberPad value={input} onChange={setInput} onSubmit={() => submit(Number(input), "keypad")} disabled={phase !== "question" || paused} />
+              <div className="grid grid-cols-2 gap-3" role="group" aria-label="こたえを えらぶ">
+                {q.choices.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    data-testid="choice"
+                    data-correct={c === q.answer ? "true" : undefined}
+                    disabled={phase !== "question" || paused}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      submit(c, "choice");
+                    }}
+                    className="press flex min-h-[72px] items-center justify-center rounded-lg bg-canvas text-[34px] font-bold tabular-nums ring-1 ring-hairline sm:min-h-24 sm:text-[40px]"
+                  >
+                    {c}
+                  </button>
+                ))}
               </div>
             </>
           )}

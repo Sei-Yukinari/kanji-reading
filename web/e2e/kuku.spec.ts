@@ -18,22 +18,18 @@ async function startPractice(page: Page, dans: number[], order: "じゅんばん
   await expect(page).toHaveURL(/\/kuku\/quiz\/$/);
 }
 
-/** 数字キーで回答する */
-async function answerByKeypad(page: Page, value: number) {
-  const pad = page.getByRole("group", { name: "すうじ キー" });
-  for (const d of String(value)) await pad.getByRole("button", { name: d, exact: true }).click();
-  await page.getByTestId("submit").click();
+/** 4 択で回答する(正解 / 誤答の 1 つ目) */
+async function answerByChoice(page: Page, correct: boolean) {
+  await page.locator(correct ? "[data-testid=choice][data-correct]" : "[data-testid=choice]:not([data-correct])").first().click();
 }
 
 /** 出題中の残りの問題をすべて回答する。shouldBeCorrect(i) で、この関数で答える i 問目(0 始まり)の正誤を決める */
 async function answerAllKuku(page: Page, shouldBeCorrect: (i: number) => boolean = () => true) {
   for (let i = 0; ; i++) {
-    const section = page.locator("[data-answer]");
-    await expect(page.getByTestId("submit")).toBeVisible();
+    await expect(page.getByTestId("choice")).toHaveCount(4);
     const label = (await page.getByLabel(/もんめ \/ \d+もん$/).getAttribute("aria-label"))!;
     const [, cur, total] = label.match(/^(\d+)もんめ \/ (\d+)もん$/)!.map(Number);
-    const answer = Number(await section.getAttribute("data-answer"));
-    await answerByKeypad(page, shouldBeCorrect(i) ? answer : answer === 1 ? 2 : 1);
+    await answerByChoice(page, shouldBeCorrect(i));
     await expect(page.getByTestId("feedback")).toBeVisible();
     await expect(page.getByTestId("answer-chart")).toBeVisible();
     await page.getByTestId("feedback").click();
@@ -62,7 +58,7 @@ test("科目を切り替えて、三角視算表の全体図から唱えと語�
   await expect(page).toHaveURL(/\/home\/$/);
 });
 
-test("じゅんばんで 3 のだんを数字キーで解き、全体図に学習中が反映される(FR-027, FR-028, FR-030)", async ({ page }) => {
+test("じゅんばんで 3 のだんを 4 択で解き、全体図に学習中が反映される(FR-027, FR-028, FR-030)", async ({ page }) => {
   await openKuku(page);
   await startPractice(page, [3], "じゅんばん");
   // 暗唱の順で、式の形
@@ -84,10 +80,10 @@ test("間違えた式と時間がかかった式が ふくしゅう に出て、
   await expect(review).toBeDisabled();
 
   await startPractice(page, [7, 8], "バラバラ");
-  // 1 問目: 時間をかけて正解(数字キーは 5 秒を超えると遅い正解)
-  const first = Number(await page.locator("[data-answer]").getAttribute("data-answer"));
+  // 1 問目: 時間をかけて正解(4 択は 5 秒を超えると遅い正解)
+  await expect(page.getByTestId("choice")).toHaveCount(4);
   await page.waitForTimeout(5300);
-  await answerByKeypad(page, first);
+  await answerByChoice(page, true);
   await expect(page.getByTestId("feedback")).toHaveText(/つぎは もっと はやく/);
   await page.getByTestId("feedback").click();
   // 残り 9 問: 2 問目だけ間違える
@@ -133,11 +129,11 @@ test("三角と「積から因数」の問題にも答えられる(FR-027)", asy
     else await page.getByRole("button", { name: "もういちど" }).click();
     for (let i = 0; i < 10; i++) {
       const section = page.locator("[data-answer]");
-      await expect(page.getByTestId("submit")).toBeVisible();
+      await expect(page.getByTestId("choice")).toHaveCount(4);
       const format = await section.getAttribute("data-format");
       const text = (await page.getByTestId("prompt").textContent()) ?? "";
       seen.add(format === "triangle" ? "triangle" : text.endsWith("=?") ? "expr" : "factor");
-      await answerByKeypad(page, Number(await section.getAttribute("data-answer")));
+      await answerByChoice(page, true);
       await expect(page.getByTestId("feedback")).toHaveText("⭕️ せいかい!");
       await page.getByTestId("feedback").click();
     }
@@ -146,7 +142,7 @@ test("三角と「積から因数」の問題にも答えられる(FR-027)", asy
   expect(seen).toEqual(new Set(["expr", "triangle", "factor"]));
 });
 
-test("音声入力で答えられる。使えなくなったら数字キーに戻る(FR-031, NFR-016)", async ({ page }) => {
+test("音声入力で答えられる。使えなくなったら 4 択に戻る(FR-031, NFR-016)", async ({ page }) => {
   // ブラウザの音声認識の代わり。聞き取りを始めると、そのときの正解(または __speechText)を「認識」する
   await page.addInitScript(() => {
     const w = window as unknown as Record<string, unknown>;
@@ -201,11 +197,11 @@ test("音声入力で答えられる。使えなくなったら数字キーに�
   await page.evaluate(() => ((window as unknown as Record<string, unknown>).__speechText = "こんにちは"));
   await expect(page.getByText(/もういちど いってね/)).toBeVisible();
 
-  // マイクが使えなくなったら、音声入力をやめて数字キーで答える
+  // マイクが使えなくなったら、音声入力をやめて 4 択で答える
   await page.evaluate(() => ((window as unknown as Record<string, unknown>).__speechError = "not-allowed"));
-  await expect(page.getByText("こえが つかえないので、すうじで こたえてね")).toBeVisible();
+  await expect(page.getByText("こえが つかえないので、えらんで こたえてね")).toBeVisible();
   await expect(page.getByRole("button", { name: /こえで こたえる/ })).toHaveAttribute("aria-pressed", "false");
-  await answerByKeypad(page, 27);
+  await answerByChoice(page, true);
   await expect(page.getByTestId("feedback")).toHaveText("⭕️ せいかい!");
 });
 
@@ -217,6 +213,6 @@ test("音声認識がないブラウザでは「こえで こたえる」を出�
   });
   await openKuku(page);
   await startPractice(page, [2], "じゅんばん");
-  await expect(page.getByRole("group", { name: "すうじ キー" })).toBeVisible();
+  await expect(page.getByTestId("choice")).toHaveCount(4);
   await expect(page.getByRole("button", { name: /こえで こたえる/ })).toHaveCount(0);
 });

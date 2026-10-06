@@ -24,7 +24,7 @@ test("一度読み込んだ後はオフラインでも学習できる(FR-019)", 
   await expect(page).toHaveURL(/\/home\/$/);
 });
 
-test("九九はオフラインでも数字キーで学習でき、唱えの音声も鳴らせる(FR-019, FR-029, NFR-016)", async ({ page, context }) => {
+test("九九はオフラインでも 4 択で学習でき、唱えの音声も鳴らせる(FR-019, FR-029, NFR-016)", async ({ page, context }) => {
   await page.goto("/");
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
@@ -45,13 +45,11 @@ test("九九はオフラインでも数字キーで学習でき、唱えの音�
   await page.reload();
   await page.getByRole("button", { name: /れんしゅう/ }).click();
   await page.getByRole("button", { name: "はじめる" }).click();
-  await expect(page.getByRole("group", { name: "すうじ キー" })).toBeVisible();
+  await expect(page.getByTestId("choice")).toHaveCount(4);
   // オフラインでは音声入力を出さない
   await expect(page.getByRole("button", { name: /こえで こたえる/ })).toHaveCount(0);
-  const answer = await page.locator("[data-answer]").getAttribute("data-answer");
-  for (const d of answer!) await page.getByRole("group", { name: "すうじ キー" }).getByRole("button", { name: d, exact: true }).click();
   const voice = page.waitForResponse((r) => r.url().includes("/audio/kuku/") && r.ok());
-  await page.getByTestId("submit").click();
+  await page.locator("[data-testid=choice][data-correct]").click();
   await expect(page.getByTestId("feedback")).toHaveText("⭕️ せいかい!");
   await voice;
 });
