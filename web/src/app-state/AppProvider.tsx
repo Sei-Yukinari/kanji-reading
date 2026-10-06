@@ -7,6 +7,7 @@ import { SoundPlayer } from "../audio/sound";
 import { DataLoadError, loadGradeData, loadManifest } from "../data/loader";
 import type { GradeData, Manifest } from "../data/types";
 import type { AnswerRecord, Mode, Profile, QuizItem, SessionRecord, Settings } from "../engine/types";
+import type { KukuAnswer, KukuConfig, KukuQuestion } from "../kuku/engine";
 import { openStore, type LearningStore } from "../store/db";
 
 export interface QuizConfig {
@@ -23,6 +24,18 @@ export interface QuizResult {
   newMedals: string[];
   previousBestMs?: number;
   /** 記録の保存に失敗した */
+  saveFailed: boolean;
+}
+
+/** 九九の 1 セットの結果(SCR-014) */
+export interface KukuResult {
+  config: KukuConfig;
+  questions: KukuQuestion[];
+  answers: KukuAnswer[];
+  /** タイムアタックのタイム(ペナルティ込み) */
+  timeMs?: number;
+  newBest?: boolean;
+  previousBestMs?: number;
   saveFailed: boolean;
 }
 
@@ -44,6 +57,10 @@ interface AppContextValue {
   setQuizConfig(c: QuizConfig | null): void;
   result: QuizResult | null;
   setResult(r: QuizResult | null): void;
+  kukuConfig: KukuConfig | null;
+  setKukuConfig(c: KukuConfig | null): void;
+  kukuResult: KukuResult | null;
+  setKukuResult(r: KukuResult | null): void;
   /** SCR-002 で編集するプロフィール(null は新規作成) */
   editingProfileId: string | null;
   setEditingProfileId(id: string | null): void;
@@ -62,6 +79,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [quizConfig, setQuizConfig] = useState<QuizConfig | null>(null);
   const [result, setResult] = useState<QuizResult | null>(null);
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
+  const [kukuConfig, setKukuConfig] = useState<KukuConfig | null>(null);
+  const [kukuResult, setKukuResult] = useState<KukuResult | null>(null);
   const soundRef = useRef<SoundPlayer>(null);
   soundRef.current ??= new SoundPlayer();
   const sound = soundRef.current;
@@ -165,8 +184,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ready, store, manifest, manifestError, profiles, profile, settings, sound,
       refreshProfiles, selectProfile, setGrade, updateSettings, loadGrade,
       quizConfig, setQuizConfig, result, setResult, editingProfileId, setEditingProfileId,
+      kukuConfig, setKukuConfig, kukuResult, setKukuResult,
     }),
-    [ready, store, manifest, manifestError, profiles, profile, settings, sound, refreshProfiles, selectProfile, setGrade, updateSettings, loadGrade, quizConfig, result, editingProfileId],
+    [ready, store, manifest, manifestError, profiles, profile, settings, sound, refreshProfiles, selectProfile, setGrade, updateSettings, loadGrade, quizConfig, result, editingProfileId, kukuConfig, kukuResult],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
