@@ -42,6 +42,13 @@ describe("九九のデータ(FR-026, FR-029)", () => {
       expect(f.chant[1]).toMatch(/^[ぁ-ん]+$/);
     }
     expect(new Set(KUKU_FACTS.map((f) => f.audioId)).size).toBe(81);
+    expect(new Set(KUKU_FACTS.flatMap((f) => [f.audioId, f.questionAudioId])).size).toBe(162);
+  });
+
+  it("表記と発音が違うのは 4×8 の「しは」(「しわ」と発音)だけ", () => {
+    for (const f of KUKU_FACTS) {
+      expect(f.spokenChant).toEqual(f.id === "4x8" ? ["しわ", "さんじゅうに"] : f.chant);
+    }
   });
 
   it("積が 1 桁の唱えは「が」で終わり、2 桁は付かない(2 の段の 2×5 以降など)", () => {

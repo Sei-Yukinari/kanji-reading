@@ -1,4 +1,4 @@
-// 九九の唱えの音声(81 本)を VOICEVOX で生成する(FR-029, T-004)。生成物(public/audio/kuku/)はコミットする。
+// 九九の唱えの音声(81 本)と、出題の読み上げ(唱えの前半だけ。81 本)を VOICEVOX で生成する(FR-029, T-004)。生成物(public/audio/kuku/)はコミットする。
 //   docker run -d --name voicevox -p 50021:50021 voicevox/voicevox_engine:cpu-latest
 //   npx tsx scripts/build-kuku-audio.ts [--engine http://localhost:50021]
 // 既に存在する音声はスキップし、参照されなくなった音声は削除する。生成後は全件を聴取する(NFR-017)。
@@ -27,6 +27,15 @@ const withAccent = (kana: string, accent: number) => {
   return moras.slice(0, a).join("") + "'" + moras.slice(a).join("");
 };
 
+/** 出題の読み上げ(例: 「しは」)。前半を 1 句にしてアクセントを固定する */
+async function buildQuestionQuery(left: string): Promise<AudioQuery> {
+  const query = await audioQuery(left);
+  query.accent_phrases = await accentPhrasesFromKana(withAccent(left, await accentOf(left)));
+  const got = morasOf(query.accent_phrases);
+  if (got !== toKatakana(left)) throw new Error(`読みを固定できません: ${left} → ${got}`);
+  return query;
+}
+
 async function buildQuery(chant: readonly [string, string]): Promise<AudioQuery> {
   const [left, right] = chant;
   const text = `${withAccent(left, await accentOf(left))}、${withAccent(right, await accentOf(right))}`;
@@ -41,16 +50,21 @@ async function buildQuery(chant: readonly [string, string]): Promise<AudioQuery>
 
 const dir = join(ROOT, "public", "audio", "kuku");
 mkdirSync(dir, { recursive: true });
-const wanted = new Map(KUKU_FACTS.map((f) => [f.audioId, f]));
+type Job = { audioId: string; label: string; build: () => Promise<AudioQuery> };
+const wanted = new Map<string, Job>();
+for (const f of KUKU_FACTS) {
+  wanted.set(f.audioId, { audioId: f.audioId, label: f.id, build: () => buildQuery(f.spokenChant) });
+  wanted.set(f.questionAudioId, { audioId: f.questionAudioId, label: `${f.id}(出題)`, build: () => buildQuestionQuery(f.spokenChant[0]) });
+}
 for (const f of readdirSync(dir)) {
   if (!wanted.has(f.replace(/\.m4a$/, ""))) rmSync(join(dir, f));
 }
 
-const todo = [...wanted.values()].filter((f) => !existsSync(join(dir, `${f.audioId}.m4a`)));
+const todo = [...wanted.values()].filter((j) => !existsSync(join(dir, `${j.audioId}.m4a`)));
 const total = todo.length;
 const worker = async () => {
-  for (let f = todo.shift(); f; f = todo.shift()) {
-    await synthesizeTo(await buildQuery(f.chant), join(dir, `${f.audioId}.m4a`), f.id);
+  for (let j = todo.shift(); j; j = todo.shift()) {
+    await synthesizeTo(await j.build(), join(dir, `${j.audioId}.m4a`), j.label);
   }
 };
 await Promise.all(Array.from({ length: CONCURRENCY }, worker));

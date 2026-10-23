@@ -81,6 +81,8 @@ function Quiz({ config }: { config: KukuConfig }) {
   const [voiceInput, setVoiceInput] = useState(false);
   const [listening, setListening] = useState(false);
   const [voiceNote, setVoiceNote] = useState<string | null>(null);
+  /** 出題の読み上げが終わった(音声入力はそれから聞き取る) */
+  const [questionRead, setQuestionRead] = useState(false);
 
   const answersRef = useRef<KukuAnswer[]>([]);
   const shownAtRef = useRef<number | null>(null);
@@ -133,18 +135,31 @@ function Quiz({ config }: { config: KukuConfig }) {
     return () => clearTimeout(t);
   }, [phase, countdown]);
 
-  // 問題を表示したら計測開始。唱えの音声を先読みしておく
+  // 問題を表示したら計測開始。式の答えを問う問題は唱えの前半を読み上げる(例: 4 × 8 =「しは」)。
+  // 積から因数・三角の問題は読み上げると答えが分かるため読まない。唱えの音声は先読みしておく
   useEffect(() => {
     if (phase !== "question") return;
     shownAtRef.current = performance.now();
     carriedRef.current = 0;
     const q = questions[index];
-    if (q) sound.preloadVoice(kukuVoiceUrl(FACT_BY_ID.get(q.factId)!.audioId));
+    if (!q) return;
+    const f = FACT_BY_ID.get(q.factId)!;
+    sound.preloadVoice(kukuVoiceUrl(f.audioId));
+    if (q.format !== "expr" || q.hidden !== "top") {
+      setQuestionRead(true);
+      return;
+    }
+    let cancelled = false;
+    setQuestionRead(false);
+    void sound.playVoice(kukuVoiceUrl(f.questionAudioId)).finally(() => !cancelled && setQuestionRead(true));
+    return () => {
+      cancelled = true;
+    };
   }, [phase, index, questions, sound]);
 
-  // 音声入力: 問題の表示中だけ聞き取る(唱えの音声を拾わないよう、正誤表示中は止める)
+  // 音声入力: 問題の表示中だけ聞き取る(読み上げ・唱えの音声を拾わないよう、読み上げ中と正誤表示中は止める)
   useEffect(() => {
-    if (!voiceInput || phase !== "question" || paused || confirmQuit) return;
+    if (!voiceInput || phase !== "question" || !questionRead || paused || confirmQuit) return;
     const listener = new NumberListener(
       (alts) => onSpokenRef.current(alts),
       () => {
@@ -159,7 +174,7 @@ function Quiz({ config }: { config: KukuConfig }) {
       listener.stop();
       listenerRef.current = null;
     };
-  }, [voiceInput, phase, index, paused, confirmQuit]);
+  }, [voiceInput, phase, questionRead, index, paused, confirmQuit]);
 
   // タイムアタックの経過時間表示
   useEffect(() => {
@@ -255,6 +270,7 @@ function Quiz({ config }: { config: KukuConfig }) {
     const slow = correct && isSlow(elapsedMs, method);
     setGiven(value);
     setPhase("feedback");
+    sound.stopVoice();
     sound.play(correct ? "correct" : "wrong");
     // 唱えを聞かせる(FR-029)。効果音と重ならないよう少し遅らせる
     voiceTimerRef.current = setTimeout(() => void sound.playVoice(kukuVoiceUrl(f.audioId)), 250);

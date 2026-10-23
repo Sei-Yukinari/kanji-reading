@@ -40,8 +40,20 @@ for (const content of loadContents()) {
   );
   console.log(`${data.grade}年: 読み ${readings.length} 行 / 問題 ${questions.length} 行`);
 }
-const chants = KUKU_FACTS.map((f) => [f.id, `${f.a} × ${f.b} = ${f.product}`, f.chant[0], f.chant[1], `public${kukuVoiceUrl(f.audioId)}`, ...CHECK.map(() => "")]);
-writeFileSync(join(outDir, "kuku-chants.csv"), csv([["式ID", "式", "唱え(前半)", "唱え(後半)", "音声ファイル", ...CHECK], ...chants]));
+const chants = KUKU_FACTS.map((f) => [
+  f.id,
+  `${f.a} × ${f.b} = ${f.product}`,
+  f.chant[0],
+  f.chant[1],
+  `public${kukuVoiceUrl(f.audioId)}`,
+  f.spokenChant.join(" "),
+  `public${kukuVoiceUrl(f.questionAudioId)}`,
+  ...CHECK.map(() => ""),
+]);
+writeFileSync(
+  join(outDir, "kuku-chants.csv"),
+  csv([["式ID", "式", "唱え(前半)", "唱え(後半)", "音声ファイル", "発音", "出題の音声ファイル", ...CHECK], ...chants]),
+);
 const goro = TRIANGLES.filter((t) => GORO[t.id]).map((t) => [t.id, `${t.small} × ${t.large} = ${t.product}`, GORO[t.id], ...CHECK.map(() => "")]);
 writeFileSync(join(outDir, "kuku-goro.csv"), csv([["三角ID", "式", "語呂合わせ", ...CHECK], ...goro]));
 console.log(`九九: 唱え ${chants.length} 行 / 語呂合わせ ${goro.length} 行`);

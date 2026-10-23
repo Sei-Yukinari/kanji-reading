@@ -60,9 +60,12 @@ test("科目を切り替えて、三角視算表の全体図から唱えと語�
 
 test("じゅんばんで 3 のだんを 4 択で解き、全体図に学習中が反映される(FR-027, FR-028, FR-030)", async ({ page }) => {
   await openKuku(page);
+  // 式の答えを問う問題は、唱えの前半(「さんいちが」)を読み上げる
+  const questionVoice = page.waitForResponse((r) => /\/audio\/kuku\/[0-9a-f]{8}\.m4a$/.test(new URL(r.url()).pathname) && r.ok());
   await startPractice(page, [3], "じゅんばん");
   // 暗唱の順で、式の形
   await expect(page.getByTestId("prompt")).toHaveText(/^3×1=\?$/);
+  await questionVoice;
   await answerAllKuku(page);
   await expect(page.getByTestId("score")).toHaveText("9 / 9 もん せいかい!");
 

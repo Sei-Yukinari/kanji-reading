@@ -59,6 +59,10 @@ export interface KukuFact {
   chant: Chant;
   /** 唱えの音声ファイル名(読みと音声設定が変わると変わる) */
   audioId: string;
+  /** 音声で発音するかな(表記と発音が違う唱えだけ chant と異なる。例: 4×8 の「しは」→「しわ」) */
+  spokenChant: Chant;
+  /** 出題の読み上げ(唱えの前半だけ。例: 4×8 →「しわ」)の音声ファイル名 */
+  questionAudioId: string;
   /** 属する三角(1 の段は null) */
   triangleId: string | null;
 }
@@ -90,10 +94,34 @@ export function kukuAudioIdOf(chant: Chant): string {
   return fnv1a(JSON.stringify([engine, speaker, speedScale, "kuku", chant]));
 }
 
+/** 表記と発音が違う唱え(助詞の「は」と同じく「わ」と発音する) */
+const PRONUNCIATIONS: Readonly<Record<string, string>> = {
+  しは: "しわ",
+};
+
+const spokenOf = (chant: Chant): Chant => [PRONUNCIATIONS[chant[0]] ?? chant[0], PRONUNCIATIONS[chant[1]] ?? chant[1]];
+
+/** 出題の読み上げの音声 ID(reading は発音するかな) */
+export function kukuQuestionAudioIdOf(reading: string): string {
+  const { engine, speaker, speedScale } = VOICE;
+  return fnv1a(JSON.stringify([engine, speaker, speedScale, "kuku-question", reading]));
+}
+
 export const KUKU_FACTS: readonly KukuFact[] = DANS.flatMap((a) =>
   CHANTS[a].map((chant, i) => {
     const b = i + 1;
-    return { id: factId(a, b), a, b, product: a * b, chant, audioId: kukuAudioIdOf(chant), triangleId: triangleIdOf(a, b) };
+    const spokenChant = spokenOf(chant);
+    return {
+      id: factId(a, b),
+      a,
+      b,
+      product: a * b,
+      chant,
+      spokenChant,
+      audioId: kukuAudioIdOf(spokenChant),
+      questionAudioId: kukuQuestionAudioIdOf(spokenChant[0]),
+      triangleId: triangleIdOf(a, b),
+    };
   }),
 );
 

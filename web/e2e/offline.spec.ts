@@ -35,11 +35,11 @@ test("九九はオフラインでも 4 択で学習でき、唱えの音声も�
   await page.getByRole("textbox").fill("くく");
   await page.getByRole("button", { name: "はじめる" }).click();
   await expect(page).toHaveURL(/\/home\/$/);
-  // 九九ホームを開くと、唱えの音声 81 本を取得して端末に保存する
+  // 九九ホームを開くと、唱えと出題の読み上げの音声 162 本を取得して端末に保存する
   await page.goto("/kuku/");
   await expect
     .poll(async () => page.evaluate(async () => (await (await caches.open("audio")).keys()).filter((r) => r.url.includes("/audio/kuku/")).length), { timeout: 30_000 })
-    .toBe(81);
+    .toBe(162);
 
   await context.setOffline(true);
   await page.reload();

@@ -41,7 +41,7 @@ export default function KukuHomePage() {
   }, [store, profileId]);
 
   useEffect(() => {
-    if (voiceOn) prefetchUrls(KUKU_FACTS.map((f) => kukuVoiceUrl(f.audioId)));
+    if (voiceOn) prefetchUrls(KUKU_FACTS.flatMap((f) => [kukuVoiceUrl(f.questionAudioId), kukuVoiceUrl(f.audioId)]));
   }, [voiceOn]);
 
   // 画面を離れたら通し再生を止める
