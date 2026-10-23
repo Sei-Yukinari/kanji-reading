@@ -221,6 +221,13 @@ describe("音声入力の数の読み取り(FR-031)", () => {
     expect(parseSpokenNumber(text)).toBe(n);
   });
 
+  it.each([
+    ["重視", 14], ["始終", 40], ["二重", 20], ["自由", 10], ["蜂", 8], ["急", 9], ["区", 9], ["四重苦", 49],
+    ["銃後", 15], ["じゅーに", 12], ["ジュー", 10],
+  ])("同じ音の漢字・長音記号: %s → %d", (text, n) => {
+    expect(parseSpokenNumber(text)).toBe(n);
+  });
+
   it.each(["", "わからない", "じゅうじゅう", "にさん"])("読み取れない: %s", (text) => {
     expect(parseSpokenNumber(text)).toBeNull();
   });
