@@ -43,3 +43,20 @@ export const SUPPORTED_SCHEMA_VERSION = 1;
 /** 学年 */
 export const GRADES = [1, 2, 3, 4, 5, 6] as const;
 export type Grade = (typeof GRADES)[number];
+
+// --- 九九(FR-025〜FR-033)。docs/design/04-functional-spec.mdx「仮置きした設計パラメータ」 ---
+
+/** 九九の 1 セットの問題数(バラバラ・タイムアタック・ふくしゅう)。じゅんばんは選んだ段の全式 */
+export const KUKU_QUESTIONS_PER_SET = 10;
+
+/** これを超えた正解は「遅い正解」として復習の対象にする(ミリ秒)(FR-033) */
+export const KUKU_SLOW_MS = { choice: 5000, voice: 8000 } as const;
+
+/** 九九の習得とみなす、速い正解の連続数(FR-033) */
+export const KUKU_MASTERY_STREAK = 3;
+
+/** 九九の正誤表示から自動遷移までの時間(ミリ秒)。唱えの音声を聞き終えられる長さ */
+export const KUKU_FEEDBACK_MS = {
+  practice: { correct: 2500, wrong: 3500 },
+  time_attack: { correct: 600, wrong: 1500 },
+} as const;

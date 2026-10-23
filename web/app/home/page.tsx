@@ -1,6 +1,6 @@
 "use client";
 
-// SCR-003 ホーム(FR-001, FR-011, FR-013)
+// SCR-003 ホーム(FR-001, FR-011, FR-013, FR-025)
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,10 @@ import { useEffect, useState } from "react";
 import { prefetchVoices } from "@/audio/prefetch";
 import { GRADES } from "@/config";
 import { isStandalone } from "@/sw/platform";
+import { HomeHeader } from "@/ui/HomeHeader";
+import { ModeCard } from "@/ui/ModeCard";
 import { Loading, Screen } from "@/ui/Screen";
+import { SubjectSwitch } from "@/ui/SubjectSwitch";
 import { useRequireProfile } from "@/ui/useRequireProfile";
 
 export default function HomePage() {
@@ -49,19 +52,9 @@ export default function HomePage() {
   };
 
   return (
-    <Screen
-      right={
-        <div className="flex w-full items-center justify-between">
-          <Link href="/profiles/" className="press flex min-h-11 items-center gap-2 rounded-pill bg-canvas py-1 pr-4 pl-2 ring-1 ring-hairline">
-            <span className="text-[28px] leading-none">{profile.icon}</span>
-            <span className="max-w-[10em] truncate text-[17px] font-bold">{profile.nickname}</span>
-          </Link>
-          <Link href="/settings/" aria-label="せってい" className="press flex size-11 items-center justify-center rounded-full bg-canvas text-[22px] ring-1 ring-hairline">
-            ⚙️
-          </Link>
-        </div>
-      }
-    >
+    <Screen right={<HomeHeader profile={profile} />}>
+      <SubjectSwitch current="kanji" />
+
       {showBanner && (
         <div className="mb-4 flex items-center gap-2 rounded-lg bg-canvas p-3 ring-1 ring-hairline">
           <Link href="/install/" className="flex-1 text-[17px] font-bold text-primary">
@@ -133,39 +126,5 @@ export default function HomePage() {
         </Link>
       </div>
     </Screen>
-  );
-}
-
-function ModeCard({
-  emoji,
-  title,
-  sub,
-  badge,
-  disabled,
-  onClick,
-}: {
-  emoji: string;
-  title: string;
-  sub: string;
-  badge?: number;
-  disabled?: boolean;
-  onClick(): void;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className="press flex min-h-24 items-center gap-4 rounded-lg bg-canvas px-5 py-4 text-left ring-1 ring-hairline disabled:opacity-45"
-    >
-      <span className="text-[40px] leading-none">{emoji}</span>
-      <span className="flex flex-1 flex-col">
-        <span className="text-[24px] font-bold">{title}</span>
-        <span className="text-[15px] text-ink-muted">{sub}</span>
-      </span>
-      {badge !== undefined && badge > 0 && (
-        <span className="flex min-w-9 items-center justify-center rounded-pill bg-primary-fill px-2 py-1 text-[17px] font-bold text-on-primary">{badge}</span>
-      )}
-    </button>
   );
 }

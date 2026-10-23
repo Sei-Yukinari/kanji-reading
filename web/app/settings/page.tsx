@@ -111,7 +111,9 @@ export default function SettingsPage() {
       <Section title="クレジット・ライセンス">
         <ul className="space-y-1 px-4 py-3 text-[14px] leading-relaxed text-ink-muted">
           <li>もんだいの はんい: 小学校学習指導要領(平成29年告示)学年別漢字配当表</li>
-          <li>よみあげの こえ: {VOICE.credit}</li>
+          <li>よみあげの こえ・くくの となえかた: {VOICE.credit}</li>
+          <li>くくの さんかく くくひょうは、どんぐり倶楽部の「三角視算表」の かんがえかたを もとに しています</li>
+          <li>くくを こえで こたえるときは、ブラウザの おんせいにんしきを つかいます(こえが ブラウザの かいしゃに おくられる ことが あります)</li>
           <li>
             もんだいの もじ: Klee One(SIL Open Font License 1.1 /{" "}
             <a className="text-primary underline" href="/fonts/KleeOne-OFL.txt">

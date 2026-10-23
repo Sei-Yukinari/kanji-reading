@@ -1,3 +1,4 @@
+import Dexie from "dexie";
 import { IDBKeyRange, indexedDB } from "fake-indexeddb";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_ANSWERS_PER_PROFILE } from "../config";
@@ -91,6 +92,53 @@ describe("LearningStore", () => {
     ]);
     await store.purgeRemovedQuestions(["old"]);
     expect((await store.getReviewItems("a")).map((r) => r.questionId)).toEqual(["keep"]);
+  });
+});
+
+describe("九九の学習データ(FR-033)", () => {
+  const outcome = (profileId: string) => ({
+    progress: [{ profileId, factId: "7x8", fastStreak: 0, status: "learning" as const, lastAnsweredAt: 1 }],
+    reviewAdd: [{ profileId, factId: "7x8", reason: "wrong" as const, addedAt: 1 }],
+    reviewRemove: [],
+  });
+
+  it("習得状況・復習対象・自己ベストを保存し、ふくしゅうで正解した式を外す", async () => {
+    await store.saveProfile(profile("a"));
+    await store.saveKukuResult("a", outcome("a"), { profileId: "a", dansKey: "7", timeMs: 9000, achievedAt: 2 });
+    expect((await store.getKukuProgress("a")).get("7x8")?.status).toBe("learning");
+    expect((await store.getKukuReview("a")).map((r) => r.reason)).toEqual(["wrong"]);
+    expect((await store.getKukuBest("a", "7"))?.timeMs).toBe(9000);
+
+    await store.saveKukuResult("a", { progress: [], reviewAdd: [], reviewRemove: ["7x8"] });
+    expect(await store.getKukuReview("a")).toEqual([]);
+  });
+
+  it("プロフィール削除で九九の記録も消え、他のプロフィールは残る", async () => {
+    await store.saveProfile(profile("a"));
+    await store.saveProfile(profile("b", 2));
+    await store.saveKukuResult("a", outcome("a"), { profileId: "a", dansKey: "1-9", timeMs: 1, achievedAt: 1 });
+    await store.saveKukuResult("b", outcome("b"));
+    await store.deleteProfile("a");
+    expect((await store.getKukuProgress("a")).size).toBe(0);
+    expect(await store.getKukuReview("a")).toEqual([]);
+    expect(await store.getKukuBest("a", "1-9")).toBeUndefined();
+    expect(await store.getKukuReview("b")).toHaveLength(1);
+  });
+
+  it("version 1 の学習データを残したまま、九九のテーブルを追加できる", async () => {
+    const name = `migrate-${n++}`;
+    const v1 = new Dexie(name, { indexedDB, IDBKeyRange });
+    v1.version(1).stores({ profiles: "id", settings: "profileId", readingProgress: "[profileId+readingId], profileId" });
+    await v1.open();
+    await v1.table("profiles").put(profile("old"));
+    v1.close();
+
+    const db = new LearningDB(name, { indexedDB, IDBKeyRange });
+    await db.open();
+    const migrated = new LearningStore(db, true);
+    expect((await migrated.getProfile("old"))?.nickname).toBe("old");
+    await migrated.saveKukuResult("old", outcome("old"));
+    expect(await migrated.getKukuReview("old")).toHaveLength(1);
   });
 });
 

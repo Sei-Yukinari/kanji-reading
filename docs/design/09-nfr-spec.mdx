@@ -136,7 +136,7 @@ description: 漢字読み学習アプリの非機能要件(NFR)ごとの実現�
 - Vercel 標準の HTTPS(TLS 1.2 以上)。`vercel.json` で HSTS を付与する
 - `vercel.json` でセキュリティヘッダーを付与する
   - `Content-Security-Policy`: `default-src 'self'`、`connect-src 'self'`、`media-src 'self'`、`font-src 'self'`
-  - `X-Content-Type-Options: nosniff`、`Referrer-Policy: no-referrer`、`Permissions-Policy`(カメラ・マイク・位置情報を無効化)
+  - `X-Content-Type-Options: nosniff`、`Referrer-Policy: no-referrer`、`Permissions-Policy`(カメラ・位置情報を無効化。マイクは九九の音声入力(FR-031)のため自サイトのみ許可 `microphone=(self)`)
 - ユーザー入力はニックネームのみ。React の標準エスケープで表示し、HTML として解釈しない
 
 #### 測定・監視方法

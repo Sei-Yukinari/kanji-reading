@@ -6,6 +6,9 @@ erDiagram
     PROFILE ||--o{ REVIEW_ITEM : "持つ"
     PROFILE ||--o{ BEST_RECORD : "持つ"
     PROFILE ||--o{ MEDAL_AWARD : "獲得する"
+    PROFILE ||--o{ KUKU_PROGRESS : "記録する"
+    PROFILE ||--o{ KUKU_REVIEW : "持つ"
+    PROFILE ||--o{ KUKU_BEST : "持つ"
 
     PROFILE {
         string profile_id PK "UUID"
@@ -62,4 +65,23 @@ erDiagram
         string profile_id PK
         string medal_id PK
         datetime awarded_at
+    }
+    KUKU_PROGRESS {
+        string profile_id PK
+        string fact_id PK "例: 3x4"
+        int fast_streak
+        string status "learning / mastered"
+        datetime last_answered_at
+    }
+    KUKU_REVIEW {
+        string profile_id PK
+        string fact_id PK
+        string reason "wrong / slow"
+        datetime added_at
+    }
+    KUKU_BEST {
+        string profile_id PK
+        string dans_key PK "例: 1-9 / 3,4"
+        int best_ms
+        datetime achieved_at
     }

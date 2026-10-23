@@ -78,7 +78,10 @@ export class SoundPlayer {
     return p;
   }
 
-  /** 正解の読みを読み上げる。取得・再生に失敗した場合は何もしない(学習は継続) */
+  /**
+   * 正解の読みを読み上げる。再生が終わる(または止められる)と resolve する。
+   * 取得・再生に失敗した場合は何もしない(学習は継続)
+   */
   async playVoice(url: string): Promise<void> {
     if (!this.voiceEnabled) return;
     const buffer = await this.loadVoice(url);
@@ -89,8 +92,10 @@ export class SoundPlayer {
       const src = ctx.createBufferSource();
       src.buffer = buffer;
       src.connect(ctx.destination);
+      const ended = new Promise<void>((resolve) => (src.onended = () => resolve()));
       src.start();
       this.currentVoice = src;
+      await ended;
     } catch {
       // 再生失敗時は読み上げをスキップ
     }

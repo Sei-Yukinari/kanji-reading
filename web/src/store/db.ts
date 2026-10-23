@@ -3,6 +3,7 @@
 import Dexie, { type DexieOptions, type Table } from "dexie";
 import { MAX_ANSWERS_PER_PROFILE } from "../config";
 import type { SessionOutcome } from "../engine/progress";
+import type { KukuBest, KukuProgress, KukuReviewItem, KukuSessionOutcome } from "../kuku/engine";
 import type {
   AnswerRecord,
   BestRecord,
@@ -29,6 +30,9 @@ export class LearningDB extends Dexie {
   bestRecords!: Table<BestRecord, [string, number]>;
   medalAwards!: Table<MedalAward, [string, string]>;
   meta!: Table<MetaEntry, string>;
+  kukuProgress!: Table<KukuProgress, [string, string]>;
+  kukuReview!: Table<KukuReviewItem, [string, string]>;
+  kukuBest!: Table<KukuBest, [string, string]>;
 
   constructor(name = "kanji-reading", options?: DexieOptions) {
     super(name, options);
@@ -43,6 +47,12 @@ export class LearningDB extends Dexie {
       bestRecords: "[profileId+grade], profileId",
       medalAwards: "[profileId+medalId], profileId",
       meta: "key",
+    });
+    // 九九(FR-033)。既存の学習データはそのまま残し、テーブルを追加するだけ
+    this.version(2).stores({
+      kukuProgress: "[profileId+factId], profileId",
+      kukuReview: "[profileId+factId], profileId",
+      kukuBest: "[profileId+dansKey], profileId",
     });
   }
 }
@@ -95,11 +105,12 @@ export class LearningStore {
     const db = this.db;
     await db.transaction(
       "rw",
-      [db.profiles, db.settings, db.sessions, db.answers, db.readingProgress, db.reviewItems, db.bestRecords, db.medalAwards, db.meta],
+      [db.profiles, db.settings, db.sessions, db.answers, db.readingProgress, db.reviewItems, db.bestRecords, db.medalAwards, db.meta, db.kukuProgress, db.kukuReview, db.kukuBest],
       async () => {
         await db.profiles.delete(profileId);
         await db.settings.delete(profileId);
-        for (const t of [db.sessions, db.answers, db.readingProgress, db.reviewItems, db.bestRecords, db.medalAwards] as Table<{ profileId: string }, unknown>[]) {
+        const tables = [db.sessions, db.answers, db.readingProgress, db.reviewItems, db.bestRecords, db.medalAwards, db.kukuProgress, db.kukuReview, db.kukuBest];
+        for (const t of tables as Table<{ profileId: string }, unknown>[]) {
           await t.where("profileId").equals(profileId).delete();
         }
         if ((await this.getMeta<string>("lastProfileId")) === profileId) await db.meta.delete("lastProfileId");
@@ -178,6 +189,32 @@ export class LearningStore {
     if (removedQuestionIds.length === 0) return;
     const removed = new Set(removedQuestionIds);
     await this.db.reviewItems.filter((r) => removed.has(r.questionId)).delete();
+  }
+
+  // --- 九九(FR-033) ---
+
+  async getKukuProgress(profileId: string): Promise<Map<string, KukuProgress>> {
+    const rows = await this.db.kukuProgress.where("profileId").equals(profileId).toArray();
+    return new Map(rows.map((r) => [r.factId, r]));
+  }
+
+  getKukuReview(profileId: string): Promise<KukuReviewItem[]> {
+    return this.db.kukuReview.where("profileId").equals(profileId).toArray();
+  }
+
+  getKukuBest(profileId: string, dansKey: string): Promise<KukuBest | undefined> {
+    return this.db.kukuBest.get([profileId, dansKey]);
+  }
+
+  /** 九九のセット完了時の保存(1 トランザクション) */
+  async saveKukuResult(profileId: string, outcome: KukuSessionOutcome, best?: KukuBest): Promise<void> {
+    const db = this.db;
+    await db.transaction("rw", [db.kukuProgress, db.kukuReview, db.kukuBest], async () => {
+      await db.kukuProgress.bulkPut(outcome.progress);
+      await db.kukuReview.bulkPut(outcome.reviewAdd);
+      await db.kukuReview.bulkDelete(outcome.reviewRemove.map((f) => [profileId, f] as [string, string]));
+      if (best) await db.kukuBest.put(best);
+    });
   }
 
   // --- 端末内のアプリ状態 ---

@@ -64,6 +64,24 @@ export function prefetchVoices(manifest: Manifest, firstGrade: number, loadGrade
   });
 }
 
+let kukuRunning = false;
+
+/** 九九の唱えの音声(81 本)をバックグラウンドで取得する(FR-029)。オフラインでも鳴らせるようにする */
+export function prefetchUrls(urls: readonly string[]): void {
+  if (kukuRunning || typeof navigator === "undefined" || !navigator.serviceWorker) return;
+  if (!navigator.serviceWorker.controller) {
+    navigator.serviceWorker.addEventListener("controllerchange", () => prefetchUrls(urls), { once: true });
+    return;
+  }
+  kukuRunning = true;
+  void (async () => {
+    const have = await cachedUrls();
+    await fetchAll(urls.filter((u) => !have.has(u)));
+  })().finally(() => {
+    kukuRunning = false;
+  });
+}
+
 export function stopPrefetchVoices(): void {
   stopped = true;
 }
