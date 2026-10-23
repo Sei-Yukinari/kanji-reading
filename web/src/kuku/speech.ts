@@ -8,6 +8,32 @@ const KANA_TOKENS: [string, number][] = [
 const KANJI_DIGITS: Record<string, number> = { 〇: 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
 const TEN = 10;
 
+/**
+ * 数の読みと同じ音の漢字(認識結果が「重視」(じゅうし)・「始終」(しじゅう)のように別の語になったとき用)。
+ * 1 字ずつ数の読みに直してから読み取る。熟語でしか読めないものは HOMOPHONE_WORDS
+ */
+const HOMOPHONE_KANJI: Record<string, string> = Object.fromEntries(
+  Object.entries({
+    いち: "位壱",
+    に: "荷児尼弐似",
+    さん: "山産参酸算傘惨",
+    し: "市死詩氏師視史子誌紙志試支士私指歯刺姿資枝思糸脂",
+    ご: "語後碁誤午護呉吾互悟",
+    ろく: "録禄",
+    しち: "質",
+    はち: "鉢蜂",
+    きゅう: "急休旧球級救求宮究給泣弓丘吸朽窮",
+    く: "区句苦駆",
+    じゅう: "重銃獣住従充柔渋汁縦",
+  }).flatMap(([kana, chars]) => [...chars].map((c) => [c, kana])),
+);
+const HOMOPHONE_WORDS: [string, string][] = [
+  ["自由", "じゅう"],
+  ["事由", "じゅう"],
+  ["読ん", "よん"],
+  ["始終", "しじゅう"],
+];
+
 const toHiragana = (s: string) => s.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
 
 /** 「十」を含む数字の並び(例: [2, 10, 4] → 24、[10, 2] → 12)を数にする。並びがおかしければ null */
@@ -39,7 +65,12 @@ export function parseSpokenNumber(text: string): number | null {
   const normalized = text.normalize("NFKC");
   const digitRuns = normalized.match(/\d+/g);
   if (digitRuns) return Number(digitRuns[digitRuns.length - 1]);
-  const s = toHiragana(normalized)
+  let s = normalized;
+  for (const [word, kana] of HOMOPHONE_WORDS) s = s.replaceAll(word, kana);
+  s = [...s].map((c) => HOMOPHONE_KANJI[c] ?? c).join("");
+  s = toHiragana(s)
+    // 「じゅー」「きゅー」のような長音記号は「う」に直す
+    .replace(/([ゅ])ー/g, "$1う")
     .replace(/[\s、。,.!?！？ー〜~]/g, "")
     .replace(/(です|だよ|かな|こたえは|こたえ)$/u, "");
 
