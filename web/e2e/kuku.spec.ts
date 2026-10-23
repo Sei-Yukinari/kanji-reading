@@ -194,14 +194,27 @@ test("音声入力で答えられる。使えなくなったら 4 択に戻る(F
   // かなで言っても数に直す(9×2 = 18)
   await page.evaluate(() => ((window as unknown as Record<string, unknown>).__speechText = "じゅうはち"));
   await expect(page.getByTestId("feedback")).toHaveText("⭕️ せいかい!");
+  // 聞き取りは 1 問 1 回だけ(問題が変わった瞬間に始めて止めると、マイクの音が読み上げにかぶる)
+  expect(await page.evaluate(() => (window as unknown as Record<string, unknown>).__listening)).toBe(2);
   await page.getByTestId("feedback").click();
 
-  // 数として読み取れなければ聞き直す
+  // 数として読み取れなければ、自動では聞き直さず(マイクの音が鳴り続けないよう)「もういちど きく」を出す
   await page.evaluate(() => ((window as unknown as Record<string, unknown>).__speechText = "こんにちは"));
   await expect(page.getByText(/もういちど いってね/)).toBeVisible();
+  const retry = page.getByRole("button", { name: "🎤 もういちど きく" });
+  await expect(retry).toBeVisible();
+  const listened = await page.evaluate(() => (window as unknown as Record<string, unknown>).__listening as number);
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => (window as unknown as Record<string, unknown>).__listening)).toBe(listened);
+
+  // 「もういちど きく」で聞き直す(9×3 = 27)
+  await page.evaluate(() => ((window as unknown as Record<string, unknown>).__speechText = "にじゅうしち"));
+  await retry.click();
+  await expect(page.getByTestId("feedback")).toHaveText("⭕️ せいかい!");
 
   // マイクが使えなくなったら、音声入力をやめて 4 択で答える
   await page.evaluate(() => ((window as unknown as Record<string, unknown>).__speechError = "not-allowed"));
+  await page.getByTestId("feedback").click();
   await expect(page.getByText("こえが つかえないので、えらんで こたえてね")).toBeVisible();
   await expect(page.getByRole("button", { name: /こえで こたえる/ })).toHaveAttribute("aria-pressed", "false");
   await answerByChoice(page, true);
