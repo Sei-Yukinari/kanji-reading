@@ -104,8 +104,9 @@ export function speechInputAvailable(): boolean {
 const FATAL_ERRORS = new Set(["not-allowed", "service-not-allowed", "network", "audio-capture", "language-not-supported"]);
 
 /**
- * 1 問ぶんの聞き取り。stop() するまで、無音で終わっても聞き直す。
- * onAlternatives は認識が確定するたびに候補の文字列を渡す。
+ * 1 回ぶんの聞き取り。無音・認識の確定で終わったら聞き直さず onEnded を呼ぶ
+ * (iOS Safari などは聞き取りを始めるたびにマイクの音が鳴るため、自動では繰り返さない)。
+ * onAlternatives は認識が確定したときに候補の文字列を渡す。
  */
 export class NumberListener {
   private rec: Recognition | null = null;
@@ -115,6 +116,7 @@ export class NumberListener {
     private readonly onAlternatives: (alternatives: string[]) => void,
     private readonly onFatal: (error: string) => void,
     private readonly onListening: (listening: boolean) => void,
+    private readonly onEnded: () => void,
   ) {}
 
   start(): void {
@@ -142,9 +144,12 @@ export class NumberListener {
       }
     };
     rec.onend = () => {
+      if (this.rec !== rec) return;
+      this.rec = null;
       this.onListening(false);
-      if (this.rec === rec) this.rec = null;
-      if (this.active) this.listen(Ctor);
+      if (!this.active) return;
+      this.active = false;
+      this.onEnded();
     };
     this.rec = rec;
     try {

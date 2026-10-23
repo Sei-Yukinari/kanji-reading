@@ -81,6 +81,9 @@ function Quiz({ config }: { config: KukuConfig }) {
   const [voiceInput, setVoiceInput] = useState(false);
   const [listening, setListening] = useState(false);
   const [voiceNote, setVoiceNote] = useState<string | null>(null);
+  /** 聞き取りが答えなしで終わった(「もういちど きく」を出す)。押すたびに voiceRetry を増やして聞き直す */
+  const [listenEnded, setListenEnded] = useState(false);
+  const [voiceRetry, setVoiceRetry] = useState(0);
   /** 出題の読み上げが終わった(音声入力はそれから聞き取る) */
   const [questionRead, setQuestionRead] = useState(false);
 
@@ -157,8 +160,10 @@ function Quiz({ config }: { config: KukuConfig }) {
     };
   }, [phase, index, questions, sound]);
 
-  // 音声入力: 問題の表示中だけ聞き取る(読み上げ・唱えの音声を拾わないよう、読み上げ中と正誤表示中は止める)
+  // 音声入力: 問題の表示中だけ聞き取る(読み上げ・唱えの音声を拾わないよう、読み上げ中と正誤表示中は止める)。
+  // 聞き取りを始めるたびにマイクの音が鳴るため、1 問 1 回だけ聞き、聞き直しは「もういちど きく」で行う
   useEffect(() => {
+    setListenEnded(false);
     if (!voiceInput || phase !== "question" || !questionRead || paused || confirmQuit) return;
     const listener = new NumberListener(
       (alts) => onSpokenRef.current(alts),
@@ -167,6 +172,7 @@ function Quiz({ config }: { config: KukuConfig }) {
         setVoiceNote("こえが つかえないので、えらんで こたえてね");
       },
       setListening,
+      () => setListenEnded(true),
     );
     listenerRef.current = listener;
     listener.start();
@@ -174,7 +180,7 @@ function Quiz({ config }: { config: KukuConfig }) {
       listener.stop();
       listenerRef.current = null;
     };
-  }, [voiceInput, phase, questionRead, index, paused, confirmQuit]);
+  }, [voiceInput, phase, questionRead, index, paused, confirmQuit, voiceRetry]);
 
   // タイムアタックの経過時間表示
   useEffect(() => {
@@ -242,6 +248,8 @@ function Quiz({ config }: { config: KukuConfig }) {
     sound.stopVoice();
     setGiven(null);
     setVoiceNote(null);
+    // 次の問題の読み上げより先に聞き取りを始めない(マイクの音が読み上げにかぶるため)
+    setQuestionRead(false);
     if (index + 1 >= questions.length) {
       void finish();
     } else {
@@ -434,6 +442,19 @@ function Quiz({ config }: { config: KukuConfig }) {
                   className={`press flex min-h-12 items-center justify-center gap-2 rounded-pill text-[17px] font-bold ring-1 ring-hairline ${voiceInput ? "bg-primary-fill text-on-primary" : "bg-canvas"}`}
                 >
                   🎤 {voiceInput ? (listening ? "きいてるよ… こたえを いってね" : "こえで こたえる: オン") : "こえで こたえる"}
+                </button>
+              )}
+              {voiceInput && listenEnded && phase === "question" && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setVoiceNote(null);
+                    setVoiceRetry((n) => n + 1);
+                  }}
+                  className="press flex min-h-12 items-center justify-center gap-2 rounded-pill bg-canvas text-[17px] font-bold ring-1 ring-hairline"
+                >
+                  🎤 もういちど きく
                 </button>
               )}
               <div className="grid grid-cols-2 gap-3" role="group" aria-label="こたえを えらぶ">
